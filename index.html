@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<title>Unir - Visualuizacion - Isabel Gonzalez</title>
 	<meta charset="utf-8">
 	<!-- Establecer el ancho de pantalla en base al dispositivo -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,7 +11,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-	<script src="https://d3js.org/d3.v6.min.js"></script>
+	<script src="https://d3js.org/d3.v6.js"></script>
 </head>
 <body>
 
@@ -41,17 +42,74 @@
 
 
 <script type="text/javascript">
-	selEstado = d3.select("#selEstado");
-	selIngresos = d3.select("#selIngresos");
 
-	selEstado.append('option')
-        .attr('value', 'todos')
-        .text('Todos');
 
-    selIngresos.append('option')
-        .attr('value', 'todos')
-        .text('Todos');
-</script>>
+//Definimos colores para las columnas
+color = d3.scaleOrdinal()
+    .range(['red', 'green', 'blue', 'yellow', 'blanchedalmond', 'aquamarine', 'chocolate', 'blueviolet',
+    	'crimson', 'darkred', 'forestgreen', 'gold', 'indigo', 'khaki', 'lavander', 'lemonchiffon',
+    	'lightblue', 'lightgray', 'lightgreen', 'lightsalmon', 'lightseagreen', 'limegreen', 'midnightbkue', 'mistyrose',
+    	'olive', 'orange', 'orangered', 'orchid', 'palevioletred', 'plum', 'royalblue', 'teal',
+    	'yellowgreen', 'spinggreen', 'powderblue', 'oldlace'])
+
+info = []
+
+selEstado = d3.select("#selEstado")
+selIngresos = d3.select("#selIngresos")
+
+estado = 'todos'
+selEstado.append('option')
+    .attr('value', 'todos')
+    .text('Todos')
+
+ingresos = 'todos'
+selIngresos.append('option')
+    .attr('value', 'todos')
+    .text('Todos')
+
+// Cargamos el archivo con los datos
+d3.csv("http://192.168.0.114/unir/d3practica1/modelo_ml_force.csv").then(function(data) {
+    data.forEach(d => {
+        d.estadoclav = +d.estadoclav
+    	d.total = +d.total
+  	})
+
+	info = data;
+
+	//console.log(data.map(d => d.estadodes));
+
+	color.domain(data.map(d => d.estadodes))
+
+	color.domain().forEach(d => {
+    	//console.log(d)
+    	selEstado.append('option')
+        	.attr('value', d)
+        	.text(d)
+ 	 })
+
+	//estados = data.map(d => d.ESTADODES);
+
+	//selEstado
+	//  	.selectAll('option')
+	//    	.data(estados)
+	//  	.enter()
+	//    	.append('option')
+	//    	.text(d => d)
+	//    	.attr('value', d => d);
+
+	//estados.forEach(d => {
+    //	selEstado.append('option')
+    //    .attr('value', d)
+    //    .text(d)
+  	//})
+
+	//data.map
+});
+
+
+
+
+</script>
 
 </body>
 </html>
