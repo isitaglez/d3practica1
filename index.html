@@ -11,7 +11,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-	<script src="https://d3js.org/d3.v6.js"></script>
+	<script src="https://d3js.org/d3.v5.js"></script>
 </head>
 <body>
 
@@ -76,8 +76,6 @@ d3.csv("http://192.168.0.114/unir/d3practica1/modelo_ml_force.csv").then(functio
 
 	info = data;
 
-	//console.log(data.map(d => d.estadodes));
-
 	color.domain(data.map(d => d.estadodes))
 
 	color.domain().forEach(d => {
@@ -86,27 +84,39 @@ d3.csv("http://192.168.0.114/unir/d3practica1/modelo_ml_force.csv").then(functio
         	.attr('value', d)
         	.text(d)
  	 })
+})
 
-	//estados = data.map(d => d.ESTADODES);
+selEstado.on('change', () => {
+    estado = selIngresos.node().value
 
-	//selEstado
-	//  	.selectAll('option')
-	//    	.data(estados)
-	//  	.enter()
-	//    	.append('option')
-	//    	.text(d => d)
-	//    	.attr('value', d => d);
+    arrayIngresos = d3.set(info.map(d => d.ingresosmendes))
+    	.values()
+    	.sort()
 
-	//estados.forEach(d => {
-    //	selEstado.append('option')
-    //    .attr('value', d)
-    //    .text(d)
-  	//})
+    console.log(arrayIngresos)
 
-	//data.map
-});
+    arrayIngresos.forEach(d => {
+    	//console.log(d)
+    	selIngresos.append('option')
+        	.attr('value', d)
+        	.text(d)
+ 	})
 
 
+    //A = d3.set(arrayIngresos).values();
+    //console.log(A);
+
+    //console.log( d3.set().values() )
+
+    //console.log(info);
+     //frame()
+})
+
+selIngresos.on('change', () => {
+    ingresos = selIngresos.node().value
+
+    //frame()
+})
 
 
 </script>
