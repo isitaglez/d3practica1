@@ -19,13 +19,13 @@
   <span class="navbar-brand mb-0 h1">Unir - Visualizaci&oacute;n</span>
 </nav>
 
-<div class="container">
+<div class="container-fluid">
 	<div class="row">
-		<div class="col-md-12">&nbsp;</div>
+		<div class="col-sm-12 col-12">&nbsp;</div>
 	</div>
 
 	<div class="form-group row">
-		<div class="col-3">
+		<div class="col-md-3 col-sm-12 col-12">
 			<div class="row" id="divEstado">
 				<div class="col-12">
 					<label class="col-3 col-form-label text-sm-left">Estado</label>
@@ -51,15 +51,15 @@
 
 		</div>
 
-		<div class="col-9">
+		<div class="col-md-9 col-sm-12 col-12">
 			<div class="row">
-				<div class="col-md-12" id="divGraficaD3bar">&nbsp;</div>
+				<div class="col-sm-12 col-12" id="divGraficaD3bar">&nbsp;</div>
 			</div>
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-md-12">&nbsp;</div>
+		<div class="col-sm-12 col-12">&nbsp;</div>
 	</div>
 </div>
 
@@ -248,7 +248,7 @@ d3.csv("modelo_ml_force.csv").then(function(data) {
 
 	// Recorre la lista de estados y agrega al combo
 	arrayEstados.forEach(d => {
-		$('#divEstado').append('<div class="col-4"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdo'+d+'" value="'+d+'" name="cEdo" OnChange="grafica()"><label class="custom-control-label" for="chkEdo'+d+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+		$('#divEstado').append('<div class="col-xl-3 col-lg-4 col-md-6 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdo'+d+'" value="'+d+'" name="cEdo" OnChange="grafica()"><label class="custom-control-label" for="chkEdo'+d+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
 
 		/*
 		d3.select("#divEstado")
@@ -272,7 +272,7 @@ d3.csv("modelo_ml_force.csv").then(function(data) {
 
 	let j = 0
 	arrayIngresos.forEach(d => {
-		$('#divIngreso').append('<div class="col-12"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkIngre'+j+'" name="cIngre" value="'+d+'"  OnChange="grafica()"><label class="custom-control-label" for="chkIngre'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+		$('#divIngreso').append('<div class="col-xl-6 col-md-12 col-sm-6 col-6"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkIngre'+j+'" name="cIngre" value="'+d+'"  OnChange="grafica()"><label class="custom-control-label" for="chkIngre'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
 		j++
 	})
 
