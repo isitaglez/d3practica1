@@ -6,13 +6,11 @@
 	<!-- Establecer el ancho de pantalla en base al dispositivo -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Cargar las librerias css -->
-	<link rel="stylesheet" href="select2.min.css">
 	<link rel="stylesheet" href="bootstrap.min.css">
 	<link rel="stylesheet" href="estilos.css">
 	<script src="jquery.min.js"></script>
 	<script src="popper.min.js"></script>
 	<script src="bootstrap.min.js"></script>
-	<script src="select2.min.js"></script>
 	<script src="d3.v5.js"></script>
 </head>
 <body>
@@ -27,39 +25,37 @@
 	</div>
 
 	<div class="form-group row">
-		<div class="col-md-3">
-			<label class="col-12 col-form-label text-sm-left">Estado</label>
-			<!-- Define combo para cargar los estados -->
-			<select id="selEstado" class="custom-select custom-select-sm" onChange="changeEstado();" autocomplete="off" >
-			</select>
-		</div>
-		<div class="col-md-3">
-			<label class="col-12 col-form-label text-sm-left">Ingresos</label>
-			<!-- Define combo para cargar los ingresos -->
-			<select id="selIngresos" onChange="changeIngreso()" class="mul-select" multiple="true" autocomplete="off" >
-			<option>Seleccione opcion(es) para ingresos</option>
-			</select>
-		</div>
-		<div class="col-md-3">
-			<label class="col-12 col-form-label text-sm-left">Orden</label>
-			<!-- Define combo para ordenamientos -->
-			<select id="selOrden" onChange="changeOrden()" class="custom-select custom-select-sm" autocomplete="off" >
-			<option value=""></option>
-			<option value="Ascendente">Ascendente</option>
-			<option value="Descendente">Descendente</option>
-			</select>
-		</div>
-		<div class="col-lg-3">
-			<button type="button" class="btn btn-primary" OnClick="grafica()">Actualizar</button>
-		</div>
-	</div>
+		<div class="col-3">
+			<div class="row" id="divEstado">
+				<div class="col-12">
+					<label class="col-3 col-form-label text-sm-left">Estado</label>
+				</div>
+			</div>
+			<div class="row" id="divIngreso">
+				<div class="col-12">
+					<label class="col-3 col-form-label text-sm-left">Ingreso</label>
+				</div>
+			</div>
 
-	<div class="row">
-		<div class="col-md-12">&nbsp;</div>
-	</div>
+			<div class="row">
+				<div class="col-12">
+					<label class="col-12 col-form-label text-sm-left">Orden</label>
+					<!-- Define combo para ordenamientos -->
+					<select id="selOrden" onChange="grafica()" class="custom-select custom-select-sm" autocomplete="off" >
+					<option value=""></option>
+					<option value="Ascendente">Ascendente</option>
+					<option value="Descendente">Descendente</option>
+					</select>
+				</div>
+			</div>
 
-	<div class="row">
-		<div class="col-md-12" id="divGraficaD3bar">&nbsp;</div>
+		</div>
+
+		<div class="col-9">
+			<div class="row">
+				<div class="col-md-12" id="divGraficaD3bar">&nbsp;</div>
+			</div>
+		</div>
 	</div>
 
 	<div class="row">
@@ -77,14 +73,12 @@ var ingreso = 'todos';
 
 //Definir colores para las columnas
 var color =['red', 'green', 'blue', 'yellow', 'blanchedalmond', 'aquamarine', 'chocolate', 'blueviolet',
-    	'crimson', 'darkred', 'forestgreen', 'gold', 'indigo', 'khaki', 'lavander', 'lemonchiffon',
-    	'lightblue', 'lightgray', 'lightgreen', 'lightsalmon', 'lightseagreen', 'limegreen', 'midnightbkue', 'mistyrose',
-    	'olive', 'orange', 'orangered', 'orchid', 'palevioletred', 'plum', 'royalblue', 'teal',
-    	'yellowgreen', 'spinggreen', 'powderblue', 'oldlace']
+    'crimson', 'darkred', 'forestgreen', 'gold', 'indigo', 'khaki', 'lavander', 'lemonchiffon',
+    'lightblue', 'lightgray', 'lightgreen', 'lightsalmon', 'lightseagreen', 'limegreen', 'midnightbkue', 'mistyrose',
+    'olive', 'orange', 'orangered', 'orchid', 'palevioletred', 'plum', 'royalblue', 'teal',
+    'yellowgreen', 'spinggreen', 'powderblue', 'oldlace']
 
 // Asignar elementos a las variables
-var selEstado = d3.select("#selEstado")
-var selIngresos = d3.select("#selIngresos")
 var selOrden = d3.select("#selOrden")
 var divGrafica = d3.select("#divGraficaD3bar")
 
@@ -99,30 +93,37 @@ function grafica()
 {
     borrar()
 
+
+    // Crear un array con la lista de ingresos seleccionados
+    let selIngre = [];
+    $("input:checkbox[name=cIngre]:checked").each(function() {
+        selIngre.push($(this).val());
+    });
+    //console.log(selIngre);
+
+    let selEdo = [];
+    $("input:checkbox[name=cEdo]:checked").each(function() {
+        selEdo.push($(this).val());
+    });
+    //console.log(selEdo);
+
+
     // Definir variables locales
     let clientesTotal = [];
     let clientesFiltrado = [];
 
-    // Crear un array con la lista de ingresos seleccionados
-    let ingre = []
-    let a = $('#selIngresos').select2('data');
-    ingre = d3.set(a.map(d => d.text))
-        .values()
 
     // Si esta seleccionado algun ingreso aplicar el filtro
-    if (ingre.length > 0) {
-    	clientesFiltrado = info.filter(function(d){ return  ingre.includes(d.ingresosmendes)  })
+    if (selIngre.length > 0) {
+    	clientesFiltrado = info.filter(function(d){ return selIngre.includes(d.ingresosmendes)  })
     } else {
     	clientesFiltrado = info
     }
 
     // Si esta seleccionado algun estado aplicar el filtro
-    if (estado!='todos') {
-    	clientesFiltrado = clientesFiltrado.filter(function(d){ return d.estadodes == estado })
+    if (selEdo.length > 0) {
+    	clientesFiltrado = clientesFiltrado.filter(function(d){ return selEdo.includes(d.estadodes)  })
     }
-
-
-    //console.log(clientesFiltrado);
 
     // Genera sumatorias con los datos filtrados
 	clientesTotal = d3.nest()
@@ -226,62 +227,6 @@ function grafica()
 		});
 }
 
-
-// Funcion para actualizar lista de ingresos
-function actualizaIngresos()
-{
-	// Crea array de opciones
-	var arrayIngresos = d3.set(info.map(d => d.ingresosmendes))
-		.values()
-		.sort()
-
-	// Elimina opciones previamente cargadas
-	selIngresos.selectAll('option')
-		.remove()
-
-	// Recorre el array y cargar en el combo
-	arrayIngresos.forEach(d => {
-		selIngresos.append('option')
-			.attr('value', d)
-			.text(d)
-	})
-
-	// Como se utiliza multi select limpiar selecciones previas
-	$('#selIngresos').select2({
-		placeholder: 'Seleccione opcion(es) para ingresos',
-		allowClear: true
-	});
-}
-
-
-// Funcion a ejecutar al seleccionar algun estado
-function changeEstado()
-{
-	estado = $('#selEstado').val()
-
-    actualizaIngresos()
-    borrar()
-}
-
-
-// Funcion a ejecutar al seleccionar algun ingreso
-function changeIngreso()
-{
-    borrar()
-}
-
-// Funcion a ejecutar al seleccionar orden de la grafica
-function changeOrden()
-{
-	borrar()
-}
-
-// Cargar opciones de todos para el combo estados
-selEstado.append('option')
-    .attr('value', 'todos')
-    .text('Todos')
-
-
 // Cargar el archivo con los datos
 d3.csv("modelo_ml_force.csv").then(function(data) {
 	data.forEach(d => {
@@ -297,24 +242,46 @@ d3.csv("modelo_ml_force.csv").then(function(data) {
 		.values()
 		.sort()
 
+	let arrayIngresos = d3.set(info.map(d => d.ingresosmendes))
+		.values()
+		.sort()
+
 	// Recorre la lista de estados y agrega al combo
 	arrayEstados.forEach(d => {
-		selEstado.append('option')
+		$('#divEstado').append('<div class="col-4"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdo'+d+'" value="'+d+'" name="cEdo" OnChange="grafica()"><label class="custom-control-label" for="chkEdo'+d+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+
+		/*
+		d3.select("#divEstado")
+			.append('div')
+			//.classed('form-check', true)
+			//.classed('form-check-inline', true)
+			//.enter()
+			.append('input')
+			.attr('type', 'checkbox')
 			.attr('value', d)
-			.text(d)
+			.attr('id', 'chkEdo'+d)
+			//.classed('form-check-input', true)
+			//.enter()
+			.append('label')
+			.attr('for', 'chkEdo'+d)
+			//.classed('form-check-label', true)
+			.text('Ostia')
+		*/
 	})
 
-	actualizaIngresos();
+
+	let j = 0
+	arrayIngresos.forEach(d => {
+		$('#divIngreso').append('<div class="col-12"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkIngre'+j+'" name="cIngre" value="'+d+'"  OnChange="grafica()"><label class="custom-control-label" for="chkIngre'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+		j++
+	})
+
 	grafica();
 })
 
 // Habilitar el componente para permitir multiselect en bootstrap
 $(document).ready(function(){
-    $(".mul-select").select2({
-        placeholder: "Seleccione opcion(es) para ingresos", //placeholder
-        tags: true,
-        tokenSeparators: ['/',',',';'," "]
-    });
+
 })
 
 </script>
