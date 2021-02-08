@@ -125,13 +125,6 @@ function grafica()
     	clientesFiltrado = clientesFiltrado.filter(function(d){ return selEdo.includes(d.estadodes)  })
     }
 
-
-    // Si esta seleccionado algun estado aplicar el filtro
-    //if (estado!='todos') {
-    //	clientesFiltrado = clientesFiltrado.filter(function(d){ return d.estadodes == estado })
-    //}
-    //console.log(clientesFiltrado);
-
     // Genera sumatorias con los datos filtrados
 	clientesTotal = d3.nest()
 		.key(function(d){ return d.ingresosmendes; })
