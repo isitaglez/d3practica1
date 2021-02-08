@@ -122,6 +122,9 @@ function grafica()
     	clientesFiltrado = clientesFiltrado.filter(function(d){ return d.estadodes == estado })
     }
 
+
+    console.log(clientesFiltrado);
+
     // Genera sumatorias con los datos filtrados
 	clientesTotal = d3.nest()
 		.key(function(d){ return d.ingresosmendes; })
@@ -216,6 +219,8 @@ function grafica()
 			}
 			return c;
 		})
+		.transition()
+		.duration(2000)
 		.attr("width", x.bandwidth())
 		.attr("height", function (d) {
 			return height - y(Number(d.total));
