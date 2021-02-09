@@ -15,32 +15,32 @@
 </head>
 <body>
 
-<nav class="navbar navbar-light bg-light">
-  <span class="navbar-brand mb-0 h1">Unir - Visualizaci&oacute;n</span>
+<nav class="navbar navbar-dark bg-dark">
+	<a class="navbar-brand" href="#"><img id="logo" class="d-inline-block mr-1" alt="Logo" src="logo.png"> <span>Visualizaci&oacute;n de datos</span></a>
 </nav>
 
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-sm-12 col-12">&nbsp;</div>
+		<div class="col-sm-12 col-12" >&nbsp;</div>
 	</div>
 
 	<div class="form-group row">
+		<div class="col-lg-1"></div>
+
 		<div class="col-md-3 col-sm-12 col-12">
 			<div class="row" id="divEstado">
-				<div class="col-12">
-					<label class="col-3 col-form-label text-sm-left">Estado</label>
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">Estado</span>
 				</div>
 			</div>
 			<div class="row" id="divIngreso">
-				<div class="col-12">
-					<label class="col-3 col-form-label text-sm-left">Ingreso</label>
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">Ingreso</span>
 				</div>
 			</div>
-
 			<div class="row">
-				<div class="col-12">
-					<label class="col-12 col-form-label text-sm-left">Orden</label>
-					<!-- Define combo para ordenamientos -->
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">Orden</span>
 					<select id="selOrden" onChange="grafica()" class="custom-select custom-select-sm" autocomplete="off" >
 					<option value=""></option>
 					<option value="Ascendente">Ascendente</option>
@@ -48,14 +48,16 @@
 					</select>
 				</div>
 			</div>
-
 		</div>
 
-		<div class="col-md-9 col-sm-12 col-12">
+		<div class="col-lg-7 col-md-9 col-sm-12 col-12">
 			<div class="row">
-				<div class="col-sm-12 col-12" id="divGraficaD3bar">&nbsp;</div>
+				<div class="col-sm-11 col-11" id="divGraficaD3bar">&nbsp;</div>
 			</div>
 		</div>
+
+		<div class="col-lg-1"></div>
+
 	</div>
 
 	<div class="row">
@@ -161,7 +163,7 @@ function grafica()
 	margin = {
 		top: 20,
 		right: 20,
-		bottom: 30,
+		bottom: 120,
 		left: 60
 	},
 	width = +svg.attr("width") - margin.left - margin.right,
@@ -189,6 +191,11 @@ function grafica()
 	g.append("g")
 		.attr("transform", "translate(0," + height + ")")
 		.call(d3.axisBottom(x))
+			.selectAll("text")
+			.attr("transform", "translate(-10,10)rotate(-45)")
+			.style("text-anchor", "end")
+			.style("font-size", 20)
+			.style("fill", "#00000")
 
 	// Genera la configuracion para el eje Y
 	g.append("g")
