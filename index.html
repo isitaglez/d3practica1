@@ -223,7 +223,7 @@ function grafica()
 			return y(Number(d.total));
 		})
 		.attr("fill", function (d) {
-			let c = 'blue';
+			let c = '#979aaa';
 			if (d.total==maximo) {
 				c = 'red'
 			}
@@ -290,9 +290,8 @@ d3.csv("modelo_ml_force.csv").then(function(data) {
 	grafica();
 })
 
-// Habilitar el componente para permitir multiselect en bootstrap
-$(document).ready(function(){
-
+$(window).resize(function(){
+	grafica();
 })
 
 </script>
