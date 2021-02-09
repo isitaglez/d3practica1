@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Unir - Visualizacion - Ma. Isabel Gonzalez</title>
+	<title>Herramientas de Visualizacion - Ma. Isabel Gonzalez</title>
 	<meta charset="utf-8">
 	<!-- Establecer el ancho de pantalla en base al dispositivo -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,7 +16,7 @@
 <body>
 
 <nav class="navbar navbar-dark bg-dark">
-	<a class="navbar-brand" href="#"><img id="logo" class="d-inline-block mr-1" alt="Logo" src="logo.png"> <span>Visualizaci&oacute;n de datos</span></a>
+	<a class="navbar-brand" href="#"><img id="logo" class="d-inline-block mr-1" alt="Logo" src="logo.png"> <span>Herramientas de Visualizaci&oacute;n</span></a>
 </nav>
 
 <div class="container-fluid">
@@ -41,11 +41,15 @@
 			<div class="row">
 				<div class="col-sm-12 col-12">
 					<span class="d-block p-2 bg-dark text-white">Orden</span>
-					<select id="selOrden" onChange="grafica()" class="custom-select custom-select-sm" autocomplete="off" >
-					<option value=""></option>
-					<option value="Ascendente">Ascendente</option>
-					<option value="Descendente">Descendente</option>
-					</select>
+					<div class="custom-control custom-radio">
+						<input type="radio" id="customAscendente" name="customRadio" class="custom-control-input" onChange="grafica()" checked>
+						<label class="custom-control-label" for="customAscendente">Ascendente</label>
+					</div>
+					<div class="custom-control custom-radio">
+						<input type="radio" id="customDescendente" name="customRadio" class="custom-control-input" onChange="grafica()">
+						<label class="custom-control-label" for="customDescendente">Descendente</label>
+					</div>
+
 				</div>
 			</div>
 		</div>
@@ -81,7 +85,6 @@ var color =['red', 'green', 'blue', 'yellow', 'blanchedalmond', 'aquamarine', 'c
     'yellowgreen', 'spinggreen', 'powderblue', 'oldlace']
 
 // Asignar elementos a las variables
-var selOrden = d3.select("#selOrden")
 var divGrafica = d3.select("#divGraficaD3bar")
 
 // Funcion para borrar la grafica cuando hacemos un cambio en los combos
@@ -136,13 +139,13 @@ function grafica()
 		    return { ingresosmendes: d.key, total: d.value };
 		});
 
-	if ($('#selOrden').val() == 'Ascendente') {
+	if ($("#customAscendente").is(':checked')) {
 		clientesTotal = clientesTotal.sort(function(a, b){
     		return a.total-b.total;
 		});
 	}
 
-	if ($('#selOrden').val() == 'Descendente') {
+	if ($("#customDescendente").is(':checked')) {
 		clientesTotal = clientesTotal.sort(function(a, b){
     		return b.total-a.total;
 		});
@@ -275,6 +278,7 @@ d3.csv("modelo_ml_force.csv").then(function(data) {
 			.text('Ostia')
 		*/
 	})
+	//$('#divEstado').append('<div class="col-sm-12 col-12"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdoTodos" name="cEdoTodos" ><label class="custom-control-label" for="chkEdoTodos" style="white-space: nowrap;"> Todos</label></div></div>')
 
 
 	let j = 0
