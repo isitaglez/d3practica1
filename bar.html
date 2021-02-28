@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Herramientas de Visualizacion - Ma. Isabel Gonzalez</title>
+	<meta charset="utf-8">
+	<!-- Establecer el ancho de pantalla en base al dispositivo -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Cargar las librerias css -->
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<link rel="stylesheet" href="estilos.css">
+	<script src="jquery.min.js"></script>
+	<script src="popper.min.js"></script>
+	<script src="bootstrap.min.js"></script>
+	<script src="d3.v5.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+	<a class="navbar-brand" href="#"><span class="d-none d-sm-none d-md-block"><img id="logo" alt="Logo" src="logo.png"></span><span class="d-inline-block">Herramientas de Visualizaci&oacute;n</span></a>
+</nav>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-12 col-12" >&nbsp;</div>
+	</div>
+
+	<div class="form-group row">
+		<div class="col-lg-1"></div>
+
+		<div class="col-md-3 col-sm-12 col-12">
+			<div class="row" id="divEstado">
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">Estado</span>
+				</div>
+			</div>
+			<div class="row" id="divIngreso">
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">Ingreso</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">Orden</span>
+					<div class="custom-control custom-radio">
+						<input type="radio" id="customAscendente" name="customRadio" class="custom-control-input" onChange="grafica()" checked>
+						<label class="custom-control-label" for="customAscendente">Ascendente</label>
+					</div>
+					<div class="custom-control custom-radio">
+						<input type="radio" id="customDescendente" name="customRadio" class="custom-control-input" onChange="grafica()">
+						<label class="custom-control-label" for="customDescendente">Descendente</label>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-7 col-md-9 col-sm-12 col-12">
+			<div class="row">
+				<div class="col-sm-11 col-11" id="divGraficaD3bar">&nbsp;</div>
+			</div>
+		</div>
+
+		<div class="col-lg-1"></div>
+
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-12">&nbsp;</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+
+// Definir variables globales
+var info = [];
+var estado = 'todos';
+var ingreso = 'todos';
+
+//Definir colores para las columnas
+var color =['red', 'green', 'blue', 'yellow', 'blanchedalmond', 'aquamarine', 'chocolate', 'blueviolet',
+    'crimson', 'darkred', 'forestgreen', 'gold', 'indigo', 'khaki', 'lavander', 'lemonchiffon',
+    'lightblue', 'lightgray', 'lightgreen', 'lightsalmon', 'lightseagreen', 'limegreen', 'midnightbkue', 'mistyrose',
+    'olive', 'orange', 'orangered', 'orchid', 'palevioletred', 'plum', 'royalblue', 'teal',
+    'yellowgreen', 'spinggreen', 'powderblue', 'oldlace']
+
+// Asignar elementos a las variables
+var divGrafica = d3.select("#divGraficaD3bar")
+
+// Funcion para borrar la grafica cuando hacemos un cambio en los combos
+function borrar()
+{
+	divGrafica.selectAll('svg').remove()
+}
+
+// Funcion para generar la grafica
+function grafica()
+{
+    borrar()
+
+
+    // Crear un array con la lista de ingresos seleccionados
+    let selIngre = [];
+    $("input:checkbox[name=cIngre]:checked").each(function() {
+        selIngre.push($(this).val());
+    });
+    //console.log(selIngre);
+
+    let selEdo = [];
+    $("input:checkbox[name=cEdo]:checked").each(function() {
+        selEdo.push($(this).val());
+    });
+    //console.log(selEdo);
+
+
+    // Definir variables locales
+    let clientesTotal = [];
+    let clientesFiltrado = [];
+
+
+    // Si esta seleccionado algun ingreso aplicar el filtro
+    if (selIngre.length > 0) {
+    	clientesFiltrado = info.filter(function(d){ return selIngre.includes(d.ingresosmendes)  })
+    } else {
+    	clientesFiltrado = info
+    }
+
+    // Si esta seleccionado algun estado aplicar el filtro
+    if (selEdo.length > 0) {
+    	clientesFiltrado = clientesFiltrado.filter(function(d){ return selEdo.includes(d.estadodes)  })
+    }
+
+    // Genera sumatorias con los datos filtrados
+	clientesTotal = d3.nest()
+		.key(function(d){ return d.ingresosmendes; })
+		.rollup(function(v) { return d3.sum(v, function(d) { return d.total; }); })
+		.entries(clientesFiltrado)
+		.map(function(d) {
+		    return { ingresosmendes: d.key, total: d.value };
+		});
+
+	if ($("#customAscendente").is(':checked')) {
+		clientesTotal = clientesTotal.sort(function(a, b){
+    		return a.total-b.total;
+		});
+	}
+
+	if ($("#customDescendente").is(':checked')) {
+		clientesTotal = clientesTotal.sort(function(a, b){
+    		return b.total-a.total;
+		});
+	}
+
+
+	// Calcula las dimensiones para el componente svg
+	let w = divGrafica.style('width').slice(0, -2)
+	let h = parseInt(w * 9 / 16)
+
+	// Agrega el svg al DOM
+	divGrafica.append("svg")
+		.attr("width", w)
+		.attr("height", h);
+
+	// Establece los atributos del svg
+	let svg = d3.select("svg"),
+	margin = {
+		top: 15,
+		right: 20,
+		bottom: 90,
+		left: 60
+	},
+	width = +svg.attr("width") - margin.left - margin.right,
+	height = +svg.attr("height") - margin.top - margin.bottom,
+	g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	//
+	let x = d3.scaleBand()
+		.rangeRound([0, width])
+		.padding(0.1);
+
+	//
+	let y = d3.scaleLinear()
+	  .rangeRound([height, 0]);
+
+	x.domain(clientesTotal.map(function (d) {
+ 		return d.ingresosmendes;
+    }));
+
+	// Obtiene el valor maximo de nuestros a graficar
+	let maximo = d3.max(clientesTotal, function (d) { return Number(d.total); }) ;
+
+	y.domain([0, maximo]);
+
+	g.append("g")
+		.attr("transform", "translate(0," + height + ")")
+		.call(d3.axisBottom(x))
+			.selectAll("text")
+			.attr("transform", "translate(-10,10)rotate(-45)")
+			.style("text-anchor", "end")
+			.style("font-size", 10)
+			.style("fill", "#00000")
+
+	// Genera la configuracion para el eje Y
+	g.append("g")
+		.call(d3.axisLeft(y))
+		.append("text")
+		.attr("fill", "#000")
+		.attr("transform", "rotate(-90)")
+		.attr("y", 6)
+		.attr("dy", "0.71em")
+		.attr("text-anchor", "end")
+		.text("Clientes");
+
+	// Crea las barras para la grafica
+	g.selectAll(".bar")
+		.data(clientesTotal)
+		.enter()
+		.append("rect")
+		.attr("class", "bar")
+ 		.attr("x", function (d) {
+			return x(d.ingresosmendes);
+		}).attr("y", function (d) {
+			return y(Number(d.total));
+		})
+		.attr("fill", function (d) {
+			let c = '#979aaa';
+			if (d.total==maximo) {
+				c = 'red'
+			}
+			return c;
+		})
+		.transition()
+		.duration(2000)
+		.attr("width", x.bandwidth())
+		.attr("height", function (d) {
+			return height - y(Number(d.total));
+		});
+}
+
+// Cargar el archivo con los datos
+d3.csv("modelo_ml_force.csv").then(function(data) {
+	data.forEach(d => {
+		d.estadoclav = +d.estadoclav
+		d.total = +d.total
+	});
+
+	//Guarda la informacion obtenida en la variable global
+	info = data;
+
+	// Crea el array de estados disponibles en base a la informacion obtenida
+	let arrayEstados = d3.set(info.map(d => d.estadodes))
+		.values()
+		.sort()
+
+	let arrayIngresos = d3.set(info.map(d => d.ingresosmendes))
+		.values()
+		.sort()
+
+	// Recorre la lista de estados y agrega al combo
+	arrayEstados.forEach(d => {
+		$('#divEstado').append('<div class="col-xl-3 col-lg-4 col-md-6 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdo'+d+'" value="'+d+'" name="cEdo" OnChange="grafica()"><label class="custom-control-label" for="chkEdo'+d+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+
+		/*
+		d3.select("#divEstado")
+			.append('div')
+			//.classed('form-check', true)
+			//.classed('form-check-inline', true)
+			//.enter()
+			.append('input')
+			.attr('type', 'checkbox')
+			.attr('value', d)
+			.attr('id', 'chkEdo'+d)
+			//.classed('form-check-input', true)
+			//.enter()
+			.append('label')
+			.attr('for', 'chkEdo'+d)
+			//.classed('form-check-label', true)
+			.text('Ostia')
+		*/
+	})
+	//$('#divEstado').append('<div class="col-sm-12 col-12"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdoTodos" name="cEdoTodos" ><label class="custom-control-label" for="chkEdoTodos" style="white-space: nowrap;"> Todos</label></div></div>')
+
+
+	let j = 0
+	arrayIngresos.forEach(d => {
+		$('#divIngreso').append('<div class="col-xl-6 col-md-12 col-sm-6 col-6"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkIngre'+j+'" name="cIngre" value="'+d+'"  OnChange="grafica()"><label class="custom-control-label" for="chkIngre'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+		j++
+	})
+
+	grafica();
+})
+
+$(window).resize(function(){
+	grafica();
+})
+
+</script>
+
+</body>
+</html>
