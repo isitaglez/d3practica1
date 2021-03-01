@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Herramientas de Visualizacion - Ma. Isabel Gonzalez</title>
+	<meta charset="utf-8">
+	<!-- Establecer el ancho de pantalla en base al dispositivo -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Cargar las librerias css -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/estilos.css">
+	<script src="js/jquery.min.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/d3.v4.js"></script>
+
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+	<a class="navbar-brand" href="#"><span class="d-none d-sm-none d-md-block"><img id="logo" alt="Logo" src="imagenes/logo.png"></span><span class="d-inline-block">Herramientas de Visualizaci&oacute;n</span></a>
+</nav>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-12 col-12" >&nbsp;</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-12"><div id="my_dataviz"></div></div>
+	</div>
+
+
+	<div class="row">
+		<div class="col-sm-12 col-12">&nbsp;</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-12"><button type="button" class="btn btn-sm btn-outline-secondary"><a href="index.html" style="color:inherit">Regresar</a></button></div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-12">&nbsp;</div>
+	</div>
+</div>
+
+
+<script>
+
+// set the dimensions and margins of the graph
+var margin = {top: 10, right: 30, bottom: 30, left: 60},
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+//Read the data
+d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv", function(data) {
+
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([4, 8])
+    .range([ 0, width ]);
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+  // Add Y axis
+  var y = d3.scaleLinear()
+    .domain([0, 9])
+    .range([ height, 0]);
+  svg.append("g")
+    .call(d3.axisLeft(y));
+
+  // Color scale: give me a specie name, I return a color
+  var color = d3.scaleOrdinal()
+    .domain(["setosa", "versicolor", "virginica" ])
+    .range([ "#440154ff", "#21908dff", "#fde725ff"])
+
+
+  // Highlight the specie that is hovered
+  var highlight = function(d){
+
+    selected_specie = d.Species
+
+    d3.selectAll(".dot")
+      .transition()
+      .duration(200)
+      .style("fill", "lightgrey")
+      .attr("r", 3)
+
+    d3.selectAll("." + selected_specie)
+      .transition()
+      .duration(200)
+      .style("fill", color(selected_specie))
+      .attr("r", 7)
+  }
+
+  // Highlight the specie that is hovered
+  var doNotHighlight = function(){
+    d3.selectAll(".dot")
+      .transition()
+      .duration(200)
+      .style("fill", "lightgrey")
+      .attr("r", 5 )
+  }
+
+  // Add dots
+  svg.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("class", function (d) { return "dot " + d.Species } )
+      .attr("cx", function (d) { return x(d.Sepal_Length); } )
+      .attr("cy", function (d) { return y(d.Petal_Length); } )
+      .attr("r", 5)
+      .style("fill", function (d) { return color(d.Species) } )
+    .on("mouseover", highlight)
+    .on("mouseleave", doNotHighlight )
+
+})
+
+</script>
+
+</body>
+</html>

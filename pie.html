@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Herramientas de Visualizacion - Ma. Isabel Gonzalez</title>
+	<meta charset="utf-8">
+	<!-- Establecer el ancho de pantalla en base al dispositivo -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Cargar las librerias css -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/estilos.css">
+	<script src="js/jquery.min.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/d3.v5.js"></script>
+	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+	<a class="navbar-brand" href="#"><span class="d-none d-sm-none d-md-block"><img id="logo" alt="Logo" src="imagenes/logo.png"></span><span class="d-inline-block">Herramientas de Visualizaci&oacute;n</span></a>
+</nav>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-12 col-12" >&nbsp;</div>
+	</div>
+
+	<div class="form-group row">
+		<div class="col-lg-1"></div>
+
+		<div class="col-md-3 col-sm-12 col-12">
+			<div class="row" id="divAnio">
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">A&ntilde;o</span>
+				</div>
+				<div class="col-sm-12 col-12">
+					<select id="selectAnio">
+						<option value=""></option>
+						<option value="2009">2009</option>
+						<option value="2010">2010</option>
+						<option value="2011">2011</option>
+						<option value="2012">2012</option>
+						<option value="2013">2013</option>
+						<option value="2014">2014</option>
+						<option value="2015">2015</option>
+						<option value="2016">2016</option>
+						<option value="2017">2017</option>
+						<option value="2018">2018</option>
+						<option value="2019">2019</option>
+						<option value="2020">2020</option>
+					</select>
+				</div>
+			</div>
+			<div class="row" id="divEstado">
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">Cluster</span>
+				</div>
+				<div class="col-sm-12 col-12">
+					<select id="selectCluster">
+						<option value=""></option>
+						<option value="0">0</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+						<option value="16">16</option>
+						<option value="17">17</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+						<option value="21">21</option>
+						<option value="22">22</option>
+						<option value="23">23</option>
+						<option value="24">24</option>
+						<option value="25">25</option>
+						<option value="26">26</option>
+						<option value="27">27</option>
+						<option value="28">28</option>
+						<option value="29">29</option>
+					</select>
+				</div>
+			</div>
+			<div class="row" id="divIngreso">
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">Sexo</span>
+				</div>
+				<div class="col-sm-12 col-12">
+					<select id="selectSexo">
+						<option value=""></option>
+						<option value="0">0</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-7 col-md-9 col-sm-12 col-12">
+			<div class="row">
+				<div class="col-sm-11 col-11" id="divGraficaD3pie">&nbsp;</div>
+			</div>
+		</div>
+
+		<div class="col-lg-1"></div>
+
+	</div>
+
+
+	<div class="row">
+		<div class="col-sm-12 col-12" >
+			<button onclick="grafica(data1)">Data 1</button>
+			<button onclick="grafica(data2)">Data 2</button>
+
+
+			<div id="my_dataviz"></div>
+		</div>
+	</div>
+
+
+	<div class="row">
+		<div class="col-sm-12 col-12">&nbsp;</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-12"><button type="button" class="btn btn-sm btn-outline-secondary"><a href="index.html" style="color:inherit">Regresar</a></button></div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-12">&nbsp;</div>
+	</div>
+</div>
+
+
+<script>
+
+// Definir variables globales
+var info = [];
+
+// Asignar elementos a las variables
+var divGrafica = d3.select("#divGraficaD3pie");
+
+// set the dimensions and margins of the graph
+var width = 450
+    height = 450
+    margin = 40
+
+// The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+var radius = Math.min(width, height) / 2 - margin
+
+// append the svg object to the div called 'my_dataviz'
+var svg = d3.select("#divGraficaD3pie")
+  .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+// create 2 data_set
+var data1 = {a: 9, b: 20, c:30, d:8, e:12}
+var data2 = {a: 6, b: 16, c:20, d:14, e:19, f:12}
+
+// set the color scale
+var color = d3.scaleOrdinal()
+  .domain(["a", "b", "c", "d", "e", "f"])
+  .range(d3.schemeDark2);
+
+// Funcion para borrar la grafica cuando hacemos un cambio en los combos
+function borrar()
+{
+	divGrafica.selectAll('svg').remove()
+}
+
+// Funcion para generar la grafica
+function grafica(data) {
+	//borrar()
+
+	let clientesFiltrado = info;
+
+	if ($("#selectAnio").val()!="") {
+		clientesFiltrado = info.filter(function(d){ return d.ANIO_ALTA_CTE == $("#selectAnio").val() })
+	}
+
+	if ($("#selectCluster").val()!="") {
+		clientesFiltrado = info.filter(function(d){ return d.CLUSTER == $("#selectCluster").val() })
+	}
+
+	if ($("#selectSexo").val()!="") {
+		clientesFiltrado = info.filter(function(d){ return d.SEXO == $("#selectSexo").val() })
+	}
+
+
+
+	// Compute the position of each group on the pie:
+	var pie = d3.pie()
+		.value(function(d) {return d.value; })
+		.sort(function(a, b) { console.log(a) ; return d3.ascending(a.key, b.key);} ) // This make sure that group order remains the same in the pie chart
+	var data_ready = pie(d3.entries(data))
+
+	// map to data
+	var u = svg.selectAll("path")
+		.data(data_ready)
+
+	// Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+	u
+		.enter()
+		.append('path')
+		.merge(u)
+		.transition()
+		.duration(1000)
+		.attr('d', d3.arc()
+			.innerRadius(0)
+			.outerRadius(radius)
+		)
+		.attr('fill', function(d){ return(color(d.data.key)) })
+		.attr("stroke", "white")
+		.style("stroke-width", "2px")
+		.style("opacity", 1)
+
+	// remove the group that is not present anymore
+	u
+		.exit()
+		.remove()
+}
+
+// Initialize the plot with the first dataset
+grafica(data1)
+
+
+
+// Cargar el archivo con los datos
+d3.csv("data/data_clientes.csv").then(function(data) {
+	data.forEach(d => {
+		d.SDO_CAPTACION = +d.SDO_CAPTACION
+		d.SDO_CORTE = +d.SDO_CORTE
+		d.MONTO_NOMINA = +d.MONTO_NOMINA
+	});
+
+	//Guarda la informacion obtenida en la variable global
+	info = data;
+
+	// Crea el array para años de originacion
+	let arrayAnio = d3.set(info.map(d => d.ANIO_ALTA_CTE))
+		.values()
+		.sort()
+
+	console.log(arrayAnio)
+
+
+	// Crea el array para cluster
+	let arrayCluster = d3.set(info.map(d => d.CLUSTER))
+		.values()
+		.sort()
+
+	console.log(arrayCluster)
+
+	//let arrayIngresos = d3.set(info.map(d => d.ingresosmendes))
+	//	.values()
+	//	.sort()
+
+	// Recorre la lista de estados y agrega al combo
+	//arrayEstados.forEach(d => {
+	//	$('#divEstado').append('<div class="col-xl-3 col-lg-4 col-md-6 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdo'+d+'" value="'+d+'" name="cEdo" OnChange="grafica()"><label class="custom-control-label" for="chkEdo'+d+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+	//})
+
+	//let j = 0
+	//arrayIngresos.forEach(d => {
+	//	$('#divIngreso').append('<div class="col-xl-6 col-md-12 col-sm-6 col-6"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkIngre'+j+'" name="cIngre" value="'+d+'"  OnChange="grafica()"><label class="custom-control-label" for="chkIngre'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+	//	j++
+	//})
+
+	//grafica();
+})
+
+
+</script>
+
+
+</body>
+</html>

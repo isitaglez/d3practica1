@@ -6,80 +6,142 @@
 	<!-- Establecer el ancho de pantalla en base al dispositivo -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Cargar las librerias css -->
-	<link rel="stylesheet" href="bootstrap.min.css">
-	<link rel="stylesheet" href="estilos.css">
-	<script src="jquery.min.js"></script>
-	<script src="popper.min.js"></script>
-	<script src="bootstrap.min.js"></script>
-	<script src="d3.v5.js"></script>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/estilos.css">
+	<link rel="stylesheet" href="css/album.css" rel="stylesheet">
+	<script src="js/jquery.min.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/d3.v5.js"></script>
+	<script src="js/holder.min.js"></script>
 </head>
 <body>
 
 <nav class="navbar navbar-dark bg-dark">
-	<a class="navbar-brand" href="#"><span class="d-none d-sm-none d-md-block"><img id="logo" alt="Logo" src="logo.png"></span><span class="d-inline-block">Herramientas de Visualizaci&oacute;n</span></a>
+	<a class="navbar-brand" href="#"><span class="d-none d-sm-none d-md-block"><img id="logo" alt="Logo" src="imagenes/logo.png"></span><span class="d-inline-block">Herramientas de Visualizaci&oacute;n</span></a>
 </nav>
 
 
-<div class="container-fluid">
-      <div class="about">
-        <h4>About</h4>
-        <p class="text-muted">Add some information about the album below, the author, or any other background context. Make it a few sentences long so folks can pick up some informative tidbits. Then, link them off to some social networking sites or contact information.</p>
-      </div>
-      <div class="social">
-        <h4>Contact</h4>
-        <ul class="list-unstyled">
-          <li><a href="#">Follow on Twitter</a></li>
-          <li><a href="#">Like on Facebook</a></li>
-          <li><a href="#">Email me</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="navbar navbar-static-top navbar-dark bg-inverse">
-    <div class="container-fluid">
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-header">
-        &#9776;
-      </button>
-      <a href="#" class="navbar-brand">Mason &amp; Daughters</a>
-    </div>
-  </div>
-
-  <section class="jumbotron text-xs-center">
+<main role="main">
+  <!--
+  <section class="jumbotron text-center">
     <div class="container">
-      <h1 class="jumbotron-heading">Mason &amp; Daughters</h1>
+      <h1 class="jumbotron-heading">Album example</h1>
       <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don't simply skip over it entirely.</p>
-      <div>
-        <a href="#" class="btn btn-info">Main call to action</a>
-        <a href="#" class="btn btn-secondary">Secondary action</a>
-      </div>
+      <p>
+        <a href="#" class="btn btn-primary my-2">Main call to action</a>
+        <a href="#" class="btn btn-secondary my-2">Secondary action</a>
+      </p>
     </div>
   </section>
+  -->
 
-  <div class="album text-muted">
+  <div class="album py-5 bg-light">
     <div class="container">
 
       <div class="row">
-        <div class="card">
-          <img src="http://www.woodworkingtalk.com/attachments/f9/60628d1358884055-baby-crib-plans-4b819e57e6fbe_147615n.jpg" alt="a baby crib">
-          <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+        <div class="col-md-4">
+          <div class="card mb-4 box-shadow">
+            <img class="card-img-top" src="imagenes/icons8-bar-chart-96.png" alt="Grafica de Barras" style="width: 96px; height: 96px;">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-secondary"><a href="bar.html" style="color:inherit">View</a></button>
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+                </div>
+                <small class="text-muted"><!--9 mins--></small>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="card">
-          <img src="http://www.takeastandinc.com/Images/HouseStand_5337.jpg" alt="a guitar and stand">
-          <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+        <div class="col-md-4">
+          <div class="card mb-4 box-shadow">
+            <img class="card-img-top" src="imagenes/icons8-scatter-plot-96.png" alt="Grafica de Puntos" style="width: 96px; height: 96px;">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-secondary"><a href="scatter.html" style="color:inherit">View</a></button>
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+                </div>
+                <small class="text-muted"><!--9 mins--></small>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="card">
-          <img src="http://ep.yimg.com/ty/cdn/plansnow/wallshlv.jpg" alt="shelves">
-          <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+        <div class="col-md-4">
+          <div class="card mb-4 box-shadow">
+            <img class="card-img-top" src="imagenes/icons8-pie-chart-96.png" alt="Grafica de Pie" style="width: 96px; height: 96px;">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-secondary"><a href="pie.html" style="color:inherit">View</a></button>
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+                </div>
+                <small class="text-muted"><!--9 mins--></small>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
+        <div class="col-md-4">
+          <div class="card mb-4 box-shadow">
+            <img class="card-img-top" src="imagenes/icons8-vertical-timeline-96.png" alt="Grafica vertical" style="width: 96px; height: 96px;">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+                </div>
+                <small class="text-muted"><!--9 mins--></small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 box-shadow">
+            <img class="card-img-top" src="imagenes/icons8-line-chart-96.png" alt="Grafica Chart" style="width: 96px; height: 96px;">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+                </div>
+                <small class="text-muted"><!--9 mins--></small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4 box-shadow">
+            <img class="card-img-top" src="imagenes/icons8-normal-distribution-histogram-96.png" alt="Grafica Distribucion" style="width: 96px; height: 96px;">
+            <div class="card-body">
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+                </div>
+                <small class="text-muted"><!--9 mins--></small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
     </div>
   </div>
 
-</div>
+</main>
+
 
 <script type="text/javascript">
-
 
 </script>
 

@@ -106,6 +106,7 @@ function grafica()
 {
     borrar()
 
+
     // Crear un array con la lista de ingresos seleccionados
     let selIngre = [];
     $("input:checkbox[name=cIngre]:checked").each(function() {
@@ -266,7 +267,27 @@ d3.csv("data/modelo_ml_force.csv").then(function(data) {
 	// Recorre la lista de estados y agrega al combo
 	arrayEstados.forEach(d => {
 		$('#divEstado').append('<div class="col-xl-3 col-lg-4 col-md-6 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdo'+d+'" value="'+d+'" name="cEdo" OnChange="grafica()"><label class="custom-control-label" for="chkEdo'+d+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+
+		/*
+		d3.select("#divEstado")
+			.append('div')
+			//.classed('form-check', true)
+			//.classed('form-check-inline', true)
+			//.enter()
+			.append('input')
+			.attr('type', 'checkbox')
+			.attr('value', d)
+			.attr('id', 'chkEdo'+d)
+			//.classed('form-check-input', true)
+			//.enter()
+			.append('label')
+			.attr('for', 'chkEdo'+d)
+			//.classed('form-check-label', true)
+			.text('Ostia')
+		*/
 	})
+	//$('#divEstado').append('<div class="col-sm-12 col-12"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdoTodos" name="cEdoTodos" ><label class="custom-control-label" for="chkEdoTodos" style="white-space: nowrap;"> Todos</label></div></div>')
+
 
 	let j = 0
 	arrayIngresos.forEach(d => {
