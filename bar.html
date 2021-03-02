@@ -124,17 +124,18 @@ function grafica()
     let clientesTotal = [];
     let clientesFiltrado = [];
 
+    clientesFiltrado = info;
 
     // Si esta seleccionado algun ingreso aplicar el filtro
     if (selIngre.length > 0) {
     	clientesFiltrado = info.filter(function(d){ return selIngre.includes(d.INGRESOSMENDES)  })
-    } else {
-    	clientesFiltrado = info
     }
+
+    console.log(clientesFiltrado);
 
     // Si esta seleccionado algun estado aplicar el filtro
     if (selEdo.length > 0) {
-    	clientesFiltrado = clientesFiltrado.filter(function(d){ return selEdo.includes(d.estadodes)  })
+    	clientesFiltrado = clientesFiltrado.filter(function(d){ return selEdo.includes(d.ESTADODES)  })
     }
 
     // Genera sumatorias con los datos filtrados
