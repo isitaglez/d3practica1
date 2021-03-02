@@ -19,6 +19,31 @@
 		font: 8px sans-serif;
 		text-anchor: middle;
 	}
+
+	#tooltip {
+		position: absolute;
+		width: auto;
+		height: auto;
+		padding: 10px;
+		background-color: white;
+		-webkit-border-radius: 10px;
+		-moz-border-radius: 10px;
+		border-radius: 10px;
+		-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+		-mox-box-shadow: 4px 4px 4px 10px rgba(0, 0, 0, 0.4);
+		box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4) pointer-events: none;
+	}
+
+	#tooltip.hidden {
+		opacity: 0;
+	}
+
+	#tooltip p {
+		margin: 0;
+		font-family: sans-serif;
+		font-size: 16px;
+		line-height: 20px;
+	}
 	</style>
 </head>
 <body>
@@ -92,23 +117,16 @@
 				<div class="col-sm-11 col-11">Pie de generaciones de clientes de acuerdo al año de ingreso a la empresa</div>
 			</div>
 			<div class="row">
-				<div class="col-sm-11 col-11" id="divGraficaD3pie">&nbsp;</div>
+				<div class="col-sm-11 col-11" id="divGraficaD3pie">
+					<div id="tooltip" class="hidden">
+						<p><span id="value">100</span></p>
+					</div>
+				</div>
 			</div>
 		</div>
 
 		<div class="col-lg-1"></div>
 
-	</div>
-
-
-	<div class="row">
-		<div class="col-sm-12 col-12" >
-
-			<!--
-			<button onclick="grafica(data1)">Data 1</button>
-			<button onclick="grafica(data2)">Data 2</button>
-			-->
-		</div>
 	</div>
 
 
@@ -134,15 +152,6 @@ var info = [];
 // Asignar elementos a las variables
 var divGrafica = d3.select("#divGraficaD3pie");
 
-var tooltip = divGrafica.append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip")
-    .style("background-color", "white")
-    .style("border", "solid")
-    .style("border-width", "1px")
-    .style("border-radius", "5px")
-    .style("padding", "10px")
-
 
 // Funcion para borrar la grafica cuando hacemos un cambio en los combos
 function borrar()
@@ -156,11 +165,9 @@ function grafica() {
 
 	let clientesFiltrado = info;
 
-
 	if ($("#selectSexo").val()!="") {
 		clientesFiltrado = clientesFiltrado.filter(function(d){ return d.SEXO == $("#selectSexo").val() })
 	}
-
 
 	// Sumatoria general
 	clientesTotal = d3.nest()
@@ -251,7 +258,19 @@ function grafica() {
 		.attr("d", arc)
 		.attr("stroke", "white")
 		.style("stroke-width", "2px")
-		.style("opacity", 1);
+		.style("opacity", 1)
+		.on("mouseover", function (d) {
+			d3.select("#tooltip")
+				.style("left", (width/2) + "px")
+				.style("top", (height/2) + "px")
+				.style("opacity", 1)
+				.select("#value")
+				.text(d.value);
+		})
+		.on("mouseout", function () {
+			d3.select("#tooltip")
+				.style("opacity", 0);
+		});
 
 	arcs.append("text")
 		.attr("transform", function(d) {
