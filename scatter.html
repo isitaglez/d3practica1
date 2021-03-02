@@ -35,7 +35,7 @@
 					<span class="d-block p-2 bg-dark text-white">A&ntilde;o</span>
 				</div>
 				<div class="col-sm-12 col-12">
-					<select id="selectAnio">
+					<select id="selectAnio" onChange="grafica();">
 						<option value=""></option>
 						<option value="2009">2009</option>
 						<option value="2010">2010</option>
@@ -57,7 +57,7 @@
 					<span class="d-block p-2 bg-dark text-white">Cluster</span>
 				</div>
 				<div class="col-sm-12 col-12">
-					<select id="selectCluster">
+					<select id="selectCluster" onChange="grafica();">
 						<option value=""></option>
 						<option value="0">0</option>
 						<option value="1">1</option>
@@ -236,6 +236,20 @@ function grafica()
 
     clientesFiltrado = info;
 
+    divGrafica.selectAll('svg').remove();
+
+
+    // Si esta seleccionado algun año aplicar el filtro
+    if ( $("#selectAnio").val()!= "") {
+    	clientesFiltrado = info.filter(function(d){ return d.ANIO_ALTA_CTE==$("#selectAnio").val() })
+    }
+
+
+    if ( $("#selectCluster").val()!= "") {
+    	clientesFiltrado = clientesFiltrado.filter(function(d){ return d.CLUSTER==$("#selectCluster").val() })
+    }
+
+
     // Genera sumatorias con los datos filtrados
 	clientesTotal = d3.nest()
 		.key(function(d){ return d.CLUSTER; })
@@ -261,7 +275,7 @@ function grafica()
 		});
 
 	});
-	console.log(resumen);
+	//console.log(resumen);
 
 	let margin = {
 		top: 20,
