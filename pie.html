@@ -278,7 +278,6 @@ function grafica() {
 		})
 		.text(function(d) { return d.data.key; });
 
-
 	/*
 	svg.append("g")
 		.attr("transform", "translate(" + (width / 2 - 160) + "," + 20 + ")")
@@ -287,9 +286,6 @@ function grafica() {
 		.attr("class", "title")
 	*/
 }
-
-
-
 
 
 // Cargar el archivo con los datos
@@ -312,21 +308,6 @@ d3.csv("data/clientes_con_cluster.csv").then(function(data) {
 	let arrayCluster = d3.set(info.map(d => d.CLUSTER))
 		.values()
 		.sort()
-
-	//let arrayIngresos = d3.set(info.map(d => d.ingresosmendes))
-	//	.values()
-	//	.sort()
-
-	// Recorre la lista de estados y agrega al combo
-	//arrayEstados.forEach(d => {
-	//	$('#divEstado').append('<div class="col-xl-3 col-lg-4 col-md-6 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdo'+d+'" value="'+d+'" name="cEdo" OnChange="grafica()"><label class="custom-control-label" for="chkEdo'+d+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
-	//})
-
-	//let j = 0
-	//arrayIngresos.forEach(d => {
-	//	$('#divIngreso').append('<div class="col-xl-6 col-md-12 col-sm-6 col-6"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkIngre'+j+'" name="cIngre" value="'+d+'"  OnChange="grafica()"><label class="custom-control-label" for="chkIngre'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
-	//	j++
-	//})
 
 	grafica()
 })
