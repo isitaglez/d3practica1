@@ -35,7 +35,7 @@
 					<span class="d-block p-2 bg-dark text-white">A&ntilde;o</span>
 				</div>
 				<div class="col-sm-12 col-12">
-					<select id="selectAnio" onChange="grafica();">
+					<select id="selectAnio" class="form-control custom-select" onChange="grafica();">
 						<option value=""></option>
 						<option value="2009">2009</option>
 						<option value="2010">2010</option>
@@ -57,7 +57,7 @@
 					<span class="d-block p-2 bg-dark text-white">Cluster</span>
 				</div>
 				<div class="col-sm-12 col-12">
-					<select id="selectCluster" onChange="grafica();">
+					<select id="selectCluster" class="form-control custom-select" onChange="grafica();">
 						<option value=""></option>
 						<option value="0">0</option>
 						<option value="1">1</option>
@@ -216,7 +216,6 @@ function mousemove(d) {
       .style("top", (d3.mouse(this)[1]) + "px")
 }
 
-
 function mouseleave(d) {
     tooltip
       .transition()
@@ -281,7 +280,8 @@ function grafica()
 		top: 20,
 		right: 20,
 		bottom: 90,
-		left: 50};
+		left: 50
+	};
 
 	// Calcula las dimensiones para el componente svg
 	let width = divGrafica.style('width').slice(0, -2)
@@ -315,9 +315,9 @@ function grafica()
 			.attr("cx", function(d) { return x(d[1]); })
 			.attr("cy", function(d) { return y(d[2]); })
 			.attr("fill", function(d) { return d3_category437[d[0]]; })
-		.on("mouseover", mouseover )
-		.on("mousemove", mousemove )
-		.on("mouseleave", mouseleave );
+		.on("mouseover", mouseover)
+		.on("mousemove", mousemove)
+		.on("mouseleave", mouseleave);
 
 	// Agregamos el eje X
 	svg.append("g")
@@ -359,7 +359,6 @@ d3.csv("data/clientes_con_cluster.csv").then(function(data) {
 		.values()
 		.sort()
 	//console.log(arrayCluster)
-
 
 	// Crea el array para ingresos
 	let arrayIngresos = d3.set(info.map(d => d.INGRESOSMENDES))
