@@ -253,9 +253,8 @@ function grafica() {
 		}
 	}
 
-
-	console.log(clientesFiltrado)
-	console.log(clientesTotal);
+	//console.log(clientesFiltrado)
+	//console.log(clientesTotal);
 
 	let dataGraph = [];
 	let titleGraph = [];
@@ -264,7 +263,7 @@ function grafica() {
 		dataGraph.push(d.value);
 	});
 
-	console.log(dataGraph);
+	//console.log(dataGraph);
 
 	// Calcula las dimensiones para el componente svg
 	let width = divGrafica.style('width').slice(0, -2)
@@ -277,23 +276,29 @@ function grafica() {
 		.attr("width", width)
 		.attr("height", height)
 
-    var svg = d3.select("svg"),
+    let svg = d3.select("svg"),
         radius = Math.min(width, height) / 2 - margin,
         g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-    var color = d3.scaleOrdinal(d3_category437);
+    let color = d3.scaleOrdinal(d3_category437);
 
     // Generar el pie
-    var pie = d3.pie();
+    let pie = d3.pie().value(function(d) {
+			return d.value;
+		});
 
     // Generamos las partes
     var arc = d3.arc()
 		.innerRadius(0)
 		.outerRadius(radius);
 
+	var label = d3.arc()
+		.outerRadius(radius)
+		.innerRadius(radius - 90);
+
     //Generate groups
     var arcs = g.selectAll("arc")
-		.data(pie(dataGraph))
+		.data(pie(clientesTotal))
 		.enter()
 		.append("g")
 		.attr("class", "arc")
@@ -306,6 +311,13 @@ function grafica() {
 		.attr("stroke", "white")
 		.style("stroke-width", "2px")
 		.style("opacity", 1);
+
+	arcs.append("text")
+		.attr("transform", function(d) {
+			return "translate(" + label.centroid(d) + ")";
+		})
+		.text(function(d) { return d.data.key; });
+
 
 	/*
 	svg.append("g")
