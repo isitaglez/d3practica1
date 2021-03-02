@@ -127,7 +127,7 @@ function grafica()
 
     // Si esta seleccionado algun ingreso aplicar el filtro
     if (selIngre.length > 0) {
-    	clientesFiltrado = info.filter(function(d){ return selIngre.includes(d.ingresosmendes)  })
+    	clientesFiltrado = info.filter(function(d){ return selIngre.includes(d.INGRESOSMENDES)  })
     } else {
     	clientesFiltrado = info
     }
@@ -139,22 +139,22 @@ function grafica()
 
     // Genera sumatorias con los datos filtrados
 	clientesTotal = d3.nest()
-		.key(function(d){ return d.ingresosmendes; })
-		.rollup(function(v) { return d3.sum(v, function(d) { return d.total; }); })
+		.key(function(d){ return d.INGRESOSMENDES; })
+		.rollup(function(v) { return d3.sum(v, function(d) { return d.TOTAL; }); })
 		.entries(clientesFiltrado)
 		.map(function(d) {
-		    return { ingresosmendes: d.key, total: d.value };
+		    return { INGRESOSMENDES: d.key, TOTAL: d.value };
 		});
 
 	if ($("#customAscendente").is(':checked')) {
 		clientesTotal = clientesTotal.sort(function(a, b){
-    		return a.total-b.total;
+    		return a.TOTAL-b.TOTAL;
 		});
 	}
 
 	if ($("#customDescendente").is(':checked')) {
 		clientesTotal = clientesTotal.sort(function(a, b){
-    		return b.total-a.total;
+    		return b.TOTAL-a.TOTAL;
 		});
 	}
 
@@ -180,21 +180,19 @@ function grafica()
 	height = +svg.attr("height") - margin.top - margin.bottom,
 	g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-	//
+	// Definimos los ejes
 	let x = d3.scaleBand()
 		.rangeRound([0, width])
 		.padding(0.1);
-
-	//
 	let y = d3.scaleLinear()
 	  .rangeRound([height, 0]);
 
 	x.domain(clientesTotal.map(function (d) {
- 		return d.ingresosmendes;
+ 		return d.INGRESOSMENDES;
     }));
 
 	// Obtiene el valor maximo de nuestros a graficar
-	let maximo = d3.max(clientesTotal, function (d) { return Number(d.total); }) ;
+	let maximo = d3.max(clientesTotal, function (d) { return Number(d.TOTAL); }) ;
 
 	y.domain([0, maximo]);
 
@@ -225,13 +223,13 @@ function grafica()
 		.append("rect")
 		.attr("class", "bar")
  		.attr("x", function (d) {
-			return x(d.ingresosmendes);
+			return x(d.INGRESOSMENDES);
 		}).attr("y", function (d) {
-			return y(Number(d.total));
+			return y(Number(d.TOTAL));
 		})
 		.attr("fill", function (d) {
 			let c = '#979aaa';
-			if (d.total==maximo) {
+			if (d.TOTAL==maximo) {
 				c = 'red'
 			}
 			return c;
@@ -240,28 +238,30 @@ function grafica()
 		.duration(2000)
 		.attr("width", x.bandwidth())
 		.attr("height", function (d) {
-			return height - y(Number(d.total));
+			return height - y(Number(d.TOTAL));
 		});
 }
 
 // Cargar el archivo con los datos
-d3.csv("data/modelo_ml_force.csv").then(function(data) {
+d3.csv("data/clientes_con_cluster.csv").then(function(data) {
 	data.forEach(d => {
-		d.estadoclav = +d.estadoclav
-		d.total = +d.total
+		d.ESTADOCLAV = +d.ESTADOCLAV
+		d.TOTAL = +d.TOTAL
 	});
 
 	//Guarda la informacion obtenida en la variable global
 	info = data;
 
 	// Crea el array de estados disponibles en base a la informacion obtenida
-	let arrayEstados = d3.set(info.map(d => d.estadodes))
+	let arrayEstados = d3.set(info.map(d => d.ESTADODES))
 		.values()
 		.sort()
+	console.log(arrayEstados)
 
-	let arrayIngresos = d3.set(info.map(d => d.ingresosmendes))
+	let arrayIngresos = d3.set(info.map(d => d.INGRESOSMENDES))
 		.values()
 		.sort()
+	console.log(arrayIngresos)
 
 	// Recorre la lista de estados y agrega al combo
 	arrayEstados.forEach(d => {
