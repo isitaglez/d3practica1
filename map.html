@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Herramientas de Visualizacion - Ma. Isabel Gonzalez</title>
+	<meta charset="utf-8">
+	<!-- Establecer el ancho de pantalla en base al dispositivo -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Cargar las librerias css -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/estilos.css">
+	<script src="js/jquery.min.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/d3.v5.js"></script>
+	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+	<script src="https://d3js.org/topojson.v2.min.js"></script>
+
+	<style>
+    path {
+      fill: lightgray;
+      stroke: #000;
+    }
+
+    .graticule {
+      fill: none;
+      stroke: #ccc;
+      stroke-width: .5px;
+    }
+
+    .foreground {
+      fill: none;
+      stroke: #333;
+      stroke-width: 1.5px;
+    }
+	</style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+	<a class="navbar-brand" href="#"><span class="d-none d-sm-none d-md-block"><img id="logo" alt="Logo" src="imagenes/logo.png"></span><span class="d-inline-block">Herramientas de Visualizaci&oacute;n</span></a>
+</nav>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-12 col-12" >&nbsp;</div>
+	</div>
+
+	<div class="form-group row">
+		<div class="col-lg-1"></div>
+
+		<div class="col-md-3 col-sm-12 col-12">
+			<div class="row" id="divEstado">
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">Estado</span>
+				</div>
+			</div>
+			<div class="row" id="divIngreso">
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">Ingreso</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">Orden</span>
+					<div class="custom-control custom-radio">
+						<input type="radio" id="customAscendente" name="customRadio" class="custom-control-input" onChange="grafica()" checked>
+						<label class="custom-control-label" for="customAscendente">Ascendente</label>
+					</div>
+					<div class="custom-control custom-radio">
+						<input type="radio" id="customDescendente" name="customRadio" class="custom-control-input" onChange="grafica()">
+						<label class="custom-control-label" for="customDescendente">Descendente</label>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-7 col-md-9 col-sm-12 col-12">
+			<div class="row">
+				<div class="col-sm-11 col-11" id="divGraficaD3map"> <svg width="960" height="600"></svg></div>
+			</div>
+		</div>
+
+		<div class="col-lg-1"></div>
+
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-12">&nbsp;</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-12"><a href="index.html" style="color:inherit"><button type="button" class="btn btn-sm btn-outline-secondary">Regresar</button></a></div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12 col-12">&nbsp;</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+
+var path = d3.geoPath();
+
+var x = d3.scaleLinear()
+    .domain([1, 10])
+    .rangeRound([600, 860]);
+
+var color = d3.scaleThreshold()
+    .domain(d3.range(2, 10))
+    .range(d3.schemeBlues[9]);
+
+var g = svg.append("g")
+    //.attr("class", "key")
+    .attr("transform", "translate(0,40)");
+
+var promises = [
+  d3.json("https://d3js.org/us-10m.v1.json")
+]
+
+Promise.all(promises).then(ready)
+
+function ready([us]) {
+  svg.append("g")
+    //  .attr("class", "counties")
+    .selectAll("path")
+    .data(topojson.feature(us, us.objects.states).features)
+    .enter().append("path")
+      //.attr("fill", function(d) { return color(d.rate = unemployment.get(d.id)); })
+      .attr("d", path)
+
+
+}
+
+</script>
+</script>
+
+</body>
+</html>
