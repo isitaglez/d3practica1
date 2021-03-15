@@ -18,8 +18,12 @@
 
 	<style>
 
+	svg {
+      background-color: #2B2B2B;
+    }
+
 		.municipalities {
-		  fill: #222;
+		  fill: #ddd;
 		}
 
 		.municipalities :hover {
@@ -28,13 +32,13 @@
 
 		.state-boundary {
 		  fill: none;
-		  stroke: #fff;
+		  stroke: #222;
 		  pointer-events: none;
 		}
 
 		.municipality-boundary {
 		  fill: none;
-		  stroke: #fff;
+		  stroke: #000;
 		  stroke-opacity: .25;
 		  stroke-width: .5px;
 		  pointer-events: none;
@@ -53,50 +57,26 @@
 		<div class="col-sm-12 col-12" >&nbsp;</div>
 	</div>
 
-	<div class="form-group row">
-		<div class="col-lg-1"></div>
 
-		<div class="col-md-3 col-sm-12 col-12">
-			<div class="row" id="divEstado">
-				<div class="col-sm-12 col-12">
-					<span class="d-block p-2 bg-dark text-white">Estado</span>
-				</div>
-			</div>
+	<div class="form-group row">
+		<div class="col-sm6 col-6">
 			<div class="row" id="divIngreso">
 				<div class="col-sm-12 col-12">
 					<span class="d-block p-2 bg-dark text-white">Ingreso</span>
 				</div>
 			</div>
-			<div class="row">
+		</div>
+		<div class="col-sm6 col-6">
+			<div class="row" id="divCluster">
 				<div class="col-sm-12 col-12">
-					<span class="d-block p-2 bg-dark text-white">Orden</span>
-					<div class="custom-control custom-radio">
-						<input type="radio" id="customAscendente" name="customRadio" class="custom-control-input" onChange="grafica()" checked>
-						<label class="custom-control-label" for="customAscendente">Ascendente</label>
-					</div>
-					<div class="custom-control custom-radio">
-						<input type="radio" id="customDescendente" name="customRadio" class="custom-control-input" onChange="grafica()">
-						<label class="custom-control-label" for="customDescendente">Descendente</label>
-					</div>
-
+					<span class="d-block p-2 bg-dark text-white">Cluster</span>
 				</div>
 			</div>
 		</div>
-
-		<div class="col-lg-7 col-md-9 col-sm-12 col-12">
-			<div class="row">
-				<div class="col-sm-11 col-11" id="divGraficaD3map">
-					<svg width="960" height="600"></svg>
-				</div>
-			</div>
-		</div>
-
-		<div class="col-lg-1"></div>
-
 	</div>
 
 	<div class="row">
-		<div class="col-sm-12 col-12">&nbsp;</div>
+		<div class="col-sm-12 col-12" id="divGraficaD3map"><svg width="1600" height="900"></svg></div>
 	</div>
 
 	<div class="row">
@@ -111,38 +91,20 @@
 
 <script type="text/javascript">
 
-
-/*
-var width = 960,
-    height = 500;
-
-var projection = d3.geoMercator()
-    .scale(1200)
-    .center([-102.34034978813841, 24.012062015793]);
-
-var svg = d3.select("#divGraficaD3map").append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-var g = svg.append("g");
-*/
-
+// Definir variables globales
+var info = [];
+var ingreso = 'todos';
+var cluster = 'todos';
 
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
-//console.log('Ostia 1');
-
 var projection = d3.geoMercator()
-      .scale(1400)
-      .center([-102, 26]);
-
-//console.log('Ostia 2');
+      .scale(2000)
+      .center([-112, 29]);
 
 var path = d3.geoPath().projection(projection);
-
-//console.log('Ostia 3');
 
 
 var promises = [
@@ -152,14 +114,16 @@ var promises = [
 Promise.all(promises).then(ready)
 
 function ready([mx]) {
-	//console.log('Ostia 5');
-
 	svg.selectAll("path")
     .data(topojson.object(mx, mx.objects.municipalities).geometries)
     .enter().append("path")
     .attr("d", path)
+    	.attr("fill", function(d) {
+    		if(d.properties.state_code==15) { return 'red' }
+    		else { return '#ddd'  }
+		})
     .append("title")
-      .text(function(d) { if(d.properties.mun_name=='Tlalpan') { console.log( d.properties); } return d.properties.mun_name; })
+      .text(function(d) { return d.properties.mun_name; })
     //.attr("fill", "transparent")
     //.style("stroke", "#333")
     //.style("stroke-width", ".2px")
@@ -175,40 +139,49 @@ function ready([mx]) {
 }
 
 
+function grafica()
+{
 
-//console.log('Ostia 4');
-
-
-/*
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+}
 
 
-var projection = d3.geoMercator()
-      .scale(1400)
-      .center([-102, 26]);
+// Cargar el archivo con los datos
+d3.csv("data/clientes_con_cluster.csv").then(function(data) {
+	data.forEach(d => {
+		d.ESTADOCLAV = +d.ESTADOCLAV
+		d.TOTAL = +d.TOTAL
+		d.CLUSTER = +d.CLUSTER
+	});
+
+	//Guarda la informacion obtenida en la variable global
+	info = data;
+
+	let arrayIngresos = d3.set(info.map(d => d.INGRESOSMENDES))
+		.values()
+		.sort()
+
+	let arrayClusters = d3.set(info.map(d => d.CLUSTER))
+		.values()
+		.sort()
+
+	// Recorre la lista de ingresos y agregamos al combo
+	let j = 0
+	arrayIngresos.forEach(d => {
+		$('#divIngreso').append('<div class="col-xl-3 col-md-12 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkIngre'+j+'" name="cIngre" value="'+d+'" OnChange="grafica()"><label class="custom-control-label" for="chkIngre'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+		j++
+	})
 
 
-var path = d3.geoPath()
-	.projection(projection);
+	j = 0
+	arrayClusters.forEach(d => {
+		$('#divCluster').append('<div class="col-xl-3 col-md-12 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkCluster'+j+'" name="cCluster" value="'+d+'"  OnChange="grafica()"><label class="custom-control-label" for="chkCluster'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+		j++
+	})
 
-var promises = [
-  d3.json("data/geo-data.json")
-]
+	grafica();
+})
 
-Promise.all(promises).then(ready)
 
-function ready([mx]) {
-    svg.append('path')
-		.datum(topojson.feature(mx, mx.objects.MEX_adm1))
-		//.attr('fill', 'blue')
-		.attr("stroke", "white")
-		.attr("d", path)
-		.style("fill", function(d, i) {
-			console.log(i); console.log(d);  return 'blue';
-		});
-}*/
 
 </script>
 </script>
