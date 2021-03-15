@@ -6,7 +6,7 @@
 	<!-- Establecer el ancho de pantalla en base al dispositivo -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Cargar las librerias css -->
-	<link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/estilos.css">
 	<link rel="stylesheet" href="css/album.css" rel="stylesheet">
 	<script src="js/jquery.min.js"></script>
@@ -27,7 +27,9 @@
   <section class="jumbotron text-center">
     <div class="container">
       <h1 class="jumbotron-heading">Album example</h1>
-      <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don't simply skip over it entirely.</p>
+      <p class="lead text-muted">La etapa de visualización es la que finalmente concluye el proceso de <strong>Business Intelligence</strong>, la cual tiene como objetivo convertir datos en información para posterior pasar a <strong>Business Analitycs (modelos predictivos)</strong>,  de la información en conocimiento, para finalmente aplicar Data Science (modelos prescriptivos) y caminar del conocimiento a la sabiduria como lo muestra la imagen de la derecha., la visualización es la etapa final de todo un proceso, este si es el petroleo de los datos</p>
+
+      <p class="lead text-muted">Ankerst define la minería de datos visual como: “… un paso en el proceso de <strong>descubrimiento del conocimiento que utiliza la visualización como canal de comunicaciones</strong> entre la computadora y el usuario para obtener patrones nuevos e interpretables” <i>[Ankerst 99]</i></p>
       <p>
         <a href="#" class="btn btn-primary my-2">Main call to action</a>
         <a href="#" class="btn btn-secondary my-2">Secondary action</a>
@@ -36,15 +38,33 @@
   </section>
   -->
 
+
   <div class="album py-5 bg-light">
     <div class="container">
+
+      <div class="row">
+        <div class="col-md-12">
+          <p class="lead text-muted">La etapa de visualización es la que finalmente concluye el proceso de <strong>Business Intelligence</strong> <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal2">1</button>, el cual tiene como objetivo convertir datos en información para posterior pasar a <strong>Business Analitycs (modelos predictivos)</strong>,  de la información en conocimiento, para finalmente aplicar Data Science (modelos prescriptivos) y caminar del conocimiento a la sabiduria <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">2</button>., la visualización es la etapa final de todo un proceso, este si es el petroleo de los datos</p>
+
+          <p class="lead text-muted">Ankerst define la minería de datos visual como: “… un paso en el proceso de <strong>descubrimiento del conocimiento que utiliza la visualización como canal de comunicaciones</strong> entre la computadora y el usuario para obtener patrones nuevos e interpretables” <i>[Ankerst 99]</i></p>
+
+          <p class="lead text-muted">El presente dashboard muestra resultados de un estudio en particular, los datos son una pequena muestra para fines educativos, se utilizo la metodologia KDD y se aplicaron t&eacute;cnicas de machine learning k;means y random forest para clasificar a los clientes en clusters para identificar patrones.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          &nbsp;
+        </div>
+      </div>
+
 
       <div class="row">
         <div class="col-md-4">
           <div class="card mb-4 box-shadow">
             <img class="card-img-top" src="imagenes/icons8-bar-chart-96.png" alt="Grafica de Barras" style="width: 96px; height: 96px;">
             <div class="card-body">
-              <p class="card-text">Dispersion de ingresos por estado.</p>
+              <p class="card-text">Dispersi&oacute;n de Ingresos por Estado.</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                   <a href="bar.html" style="color:inherit"><button type="button" class="btn btn-sm btn-outline-secondary">Ver</button></a>
@@ -59,7 +79,7 @@
           <div class="card mb-4 box-shadow">
             <img class="card-img-top" src="imagenes/icons8-scatter-plot-96.png" alt="Grafica de Puntos" style="width: 96px; height: 96px;">
             <div class="card-body">
-              <p class="card-text">Cluster de clientes de acuerdo a algoritmo k-means.</p>
+              <p class="card-text">Clusters de Clientes de acuerdo a Algoritmo k-means.</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                   <a href="scatter.html" style="color:inherit"><button type="button" class="btn btn-sm btn-outline-secondary">Ver</button></a>
@@ -74,7 +94,7 @@
           <div class="card mb-4 box-shadow">
             <img class="card-img-top" src="imagenes/icons8-pie-chart-96.png" alt="Grafica de Pie" style="width: 96px; height: 96px;">
             <div class="card-body">
-              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <p class="card-text">Pie de generaciones de Clientes de acuerdo al año de ingreso a la Empresa</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                   <a href="pie.html" style="color:inherit"><button type="button" class="btn btn-sm btn-outline-secondary">Ver</button></a>
@@ -86,15 +106,17 @@
           </div>
         </div>
 
+
         <div class="col-md-4">
           <div class="card mb-4 box-shadow">
             <img class="card-img-top" src="imagenes/icons8-vertical-timeline-96.png" alt="Grafica vertical" style="width: 96px; height: 96px;">
             <div class="card-body">
-              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <p class="card-text"><!--This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.--></p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
-                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+                  <a href="boxplot.html" style="color:inherit"><button type="button" class="btn btn-sm btn-outline-secondary">Ver</button></a>
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
                 </div>
                 <small class="text-muted"><!--9 mins--></small>
               </div>
@@ -105,11 +127,11 @@
           <div class="card mb-4 box-shadow">
             <img class="card-img-top" src="imagenes/icons8-line-chart-96.png" alt="Grafica Chart" style="width: 96px; height: 96px;">
             <div class="card-body">
-              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <p class="card-text"><!--This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.--></p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
-                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
                 </div>
                 <small class="text-muted"><!--9 mins--></small>
               </div>
@@ -120,11 +142,11 @@
           <div class="card mb-4 box-shadow">
             <img class="card-img-top" src="imagenes/icons8-normal-distribution-histogram-96.png" alt="Grafica Distribucion" style="width: 96px; height: 96px;">
             <div class="card-body">
-              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <p class="card-text"><!--This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.--></p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">View</button>-->
-                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
+                  <!--<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>-->
                 </div>
                 <small class="text-muted"><!--9 mins--></small>
               </div>
@@ -133,12 +155,72 @@
         </div>
 
 
-
       </div>
+
+
+      <div class="row">
+        <div class="col-md-12">
+          &nbsp;
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          &nbsp;
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-md-12">
+          <p>[Ankerst 99] M. AnkerstAnkerst, M. , M. BreunigBreunig, H., H.--P. P. KriegelKriegel, and J. Sander. , and J. Sander. Optics: Ordering points to identify Optics: Ordering points to identify the clustering structurethe clustering structure, SIGMOD’99., SIGMOD’99.\</p>
+
+          <p>[Unir Tema 3] esquema Trabajar con Datos, 2do semestre, Visualización Interactiva de la información</p>
+        </div>
+      </div>
+
     </div>
   </div>
 
 </main>
+
+
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">De los Datos a la Sabidur&iacute;a</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img class="card-img-top" src="imagenes/piramide.jpg">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" id="myModal2">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Esquema trabajar con datos</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img class="card-img-top" src="imagenes/proceso.png">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 
 <script type="text/javascript">

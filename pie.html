@@ -13,6 +13,38 @@
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/d3.v5.js"></script>
 	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+	<style>
+	.arc text {
+		font: 8px sans-serif;
+		text-anchor: middle;
+	}
+
+	#tooltip {
+		position: absolute;
+		width: auto;
+		height: auto;
+		padding: 10px;
+		background-color: white;
+		-webkit-border-radius: 10px;
+		-moz-border-radius: 10px;
+		border-radius: 10px;
+		-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+		-mox-box-shadow: 4px 4px 4px 10px rgba(0, 0, 0, 0.4);
+		box-shadow: 4px 4px 10px rbga(0, 0, 0, 0.4) pointer-events: none;
+	}
+
+	#tooltip.hidden {
+		opacity: 0;
+	}
+
+	#tooltip p {
+		margin: 0;
+		font-family: sans-serif;
+		font-size: 16px;
+		line-height: 20px;
+	}
+	</style>
 </head>
 <body>
 
@@ -29,12 +61,27 @@
 		<div class="col-lg-1"></div>
 
 		<div class="col-md-3 col-sm-12 col-12">
-			<div class="row" id="divAnio">
+			<div class="row" id="divEstado">
 				<div class="col-sm-12 col-12">
-					<span class="d-block p-2 bg-dark text-white">A&ntilde;o</span>
+					<span class="d-block p-2 bg-dark text-white">Generaci&oacute;n</span>
 				</div>
 				<div class="col-sm-12 col-12">
-					<select id="selectAnio">
+					<select id="selectGeneracion" autocomplete="off" class="form-control custom-select" onChange="grafica()">
+						<option value=""></option>
+						<option value="Baby Boombers">Baby Boombers</option>
+						<option value="Generacion X">Generacion X</option>
+						<option value="Generacion Y">Generacion Y</option>
+						<option value="Generacion Z">Generacion Z</option>
+						<option value="Sin Generacion">Sin Generacion</option>
+					</select>
+				</div>
+			</div>
+			<div class="row" id="divAnio">
+				<div class="col-sm-12 col-12">
+					<span class="d-block p-2 bg-dark text-white">A&ntilde;o de Ingreso</span>
+				</div>
+				<div class="col-sm-12 col-12">
+					<select id="selectAnio" autocomplete="off" class="form-control custom-select" onChange="grafica()">
 						<option value=""></option>
 						<option value="2009">2009</option>
 						<option value="2010">2010</option>
@@ -51,56 +98,15 @@
 					</select>
 				</div>
 			</div>
-			<div class="row" id="divEstado">
-				<div class="col-sm-12 col-12">
-					<span class="d-block p-2 bg-dark text-white">Cluster</span>
-				</div>
-				<div class="col-sm-12 col-12">
-					<select id="selectCluster">
-						<option value=""></option>
-						<option value="0">0</option>
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4">4</option>
-						<option value="5">5</option>
-						<option value="6">6</option>
-						<option value="7">7</option>
-						<option value="8">8</option>
-						<option value="9">9</option>
-						<option value="10">10</option>
-						<option value="11">11</option>
-						<option value="12">12</option>
-						<option value="13">13</option>
-						<option value="14">14</option>
-						<option value="15">15</option>
-						<option value="16">16</option>
-						<option value="17">17</option>
-						<option value="18">18</option>
-						<option value="19">19</option>
-						<option value="20">20</option>
-						<option value="21">21</option>
-						<option value="22">22</option>
-						<option value="23">23</option>
-						<option value="24">24</option>
-						<option value="25">25</option>
-						<option value="26">26</option>
-						<option value="27">27</option>
-						<option value="28">28</option>
-						<option value="29">29</option>
-					</select>
-				</div>
-			</div>
 			<div class="row" id="divIngreso">
 				<div class="col-sm-12 col-12">
 					<span class="d-block p-2 bg-dark text-white">Sexo</span>
 				</div>
 				<div class="col-sm-12 col-12">
-					<select id="selectSexo">
+					<select id="selectSexo" autocomplete="off" class="form-control custom-select" onChange="grafica()">
 						<option value=""></option>
-						<option value="0">0</option>
-						<option value="1">1</option>
-						<option value="2">2</option>
+						<option value="M">HOMBRES</option>
+						<option value="F">MUJERES</option>
 					</select>
 				</div>
 			</div>
@@ -108,7 +114,14 @@
 
 		<div class="col-lg-7 col-md-9 col-sm-12 col-12">
 			<div class="row">
-				<div class="col-sm-11 col-11" id="divGraficaD3pie">&nbsp;</div>
+				<div class="col-sm-11 col-11">Pie de generaciones de clientes de acuerdo al año de ingreso a la empresa</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-11 col-11" id="divGraficaD3pie">
+					<div id="tooltip" class="hidden">
+						<p><span id="value">100</span></p>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -118,22 +131,11 @@
 
 
 	<div class="row">
-		<div class="col-sm-12 col-12" >
-			<button onclick="grafica(data1)">Data 1</button>
-			<button onclick="grafica(data2)">Data 2</button>
-
-
-			<div id="my_dataviz"></div>
-		</div>
-	</div>
-
-
-	<div class="row">
 		<div class="col-sm-12 col-12">&nbsp;</div>
 	</div>
 
 	<div class="row">
-		<div class="col-sm-12 col-12"><button type="button" class="btn btn-sm btn-outline-secondary"><a href="index.html" style="color:inherit">Regresar</a></button></div>
+		<div class="col-sm-12 col-12"><a href="index.html" style="color:inherit"><button type="button" class="btn btn-sm btn-outline-secondary">Regresar</button></a></div>
 	</div>
 
 	<div class="row">
@@ -150,30 +152,6 @@ var info = [];
 // Asignar elementos a las variables
 var divGrafica = d3.select("#divGraficaD3pie");
 
-// set the dimensions and margins of the graph
-var width = 450
-    height = 450
-    margin = 40
-
-// The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
-var radius = Math.min(width, height) / 2 - margin
-
-// append the svg object to the div called 'my_dataviz'
-var svg = d3.select("#divGraficaD3pie")
-  .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-  .append("g")
-    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-// create 2 data_set
-var data1 = {a: 9, b: 20, c:30, d:8, e:12}
-var data2 = {a: 6, b: 16, c:20, d:14, e:19, f:12}
-
-// set the color scale
-var color = d3.scaleOrdinal()
-  .domain(["a", "b", "c", "d", "e", "f"])
-  .range(d3.schemeDark2);
 
 // Funcion para borrar la grafica cuando hacemos un cambio en los combos
 function borrar()
@@ -182,64 +160,136 @@ function borrar()
 }
 
 // Funcion para generar la grafica
-function grafica(data) {
-	//borrar()
+function grafica() {
+	borrar()
 
 	let clientesFiltrado = info;
 
-	if ($("#selectAnio").val()!="") {
-		clientesFiltrado = info.filter(function(d){ return d.ANIO_ALTA_CTE == $("#selectAnio").val() })
-	}
-
-	if ($("#selectCluster").val()!="") {
-		clientesFiltrado = info.filter(function(d){ return d.CLUSTER == $("#selectCluster").val() })
-	}
-
 	if ($("#selectSexo").val()!="") {
-		clientesFiltrado = info.filter(function(d){ return d.SEXO == $("#selectSexo").val() })
+		clientesFiltrado = clientesFiltrado.filter(function(d){ return d.SEXO == $("#selectSexo").val() })
 	}
 
+	// Sumatoria general
+	clientesTotal = d3.nest()
+		.key(function(d){ return d.GENERACION_CTE; })
+		.rollup(function(v) { return d3.sum(v, function(d) { return d.TOTAL; }); })
+		.entries(clientesFiltrado);
 
 
-	// Compute the position of each group on the pie:
-	var pie = d3.pie()
-		.value(function(d) {return d.value; })
-		.sort(function(a, b) { console.log(a) ; return d3.ascending(a.key, b.key);} ) // This make sure that group order remains the same in the pie chart
-	var data_ready = pie(d3.entries(data))
+	if ($("#selectGeneracion").val()!="") {
+		clientesFiltrado = clientesFiltrado.filter(function(d){ return d.GENERACION_CTE == $("#selectGeneracion").val() })
 
-	// map to data
-	var u = svg.selectAll("path")
-		.data(data_ready)
+		clientesTotal = d3.nest()
+			.key(function(d){ return d.ANIO_ALTA_CTE; })
+			.rollup(function(v) { return d3.sum(v, function(d) { return d.TOTAL; }); })
+			.entries(clientesFiltrado);
+	}
 
-	// Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-	u
+	if ($("#selectAnio").val()!="") {
+		clientesFiltrado = clientesFiltrado.filter(function(d){ return d.ANIO_ALTA_CTE == $("#selectAnio").val() })
+
+		if ($("#selectGeneracion").val()!="") {
+			clientesTotal = d3.nest()
+				.key(function(d){ return d.SEXO; })
+				.rollup(function(v) { return d3.sum(v, function(d) { return d.TOTAL; }); })
+				.entries(clientesFiltrado);
+		} else {
+			clientesTotal = d3.nest()
+				.key(function(d){ return d.GENERACION_CTE; })
+				.rollup(function(v) { return d3.sum(v, function(d) { return d.TOTAL; }); })
+				.entries(clientesFiltrado);
+		}
+	}
+
+	//console.log(clientesFiltrado)
+	//console.log(clientesTotal);
+
+	let dataGraph = [];
+	let titleGraph = [];
+
+	clientesTotal.forEach(function(d) {
+		dataGraph.push(d.value);
+	});
+
+	//console.log(dataGraph);
+
+	// Calcula las dimensiones para el componente svg
+	let width = divGrafica.style('width').slice(0, -2)
+	let height = parseInt(width * 9 / 16)
+    let margin = 40
+
+
+    d3.select("#divGraficaD3pie")
+		.append("svg")
+		.attr("width", width)
+		.attr("height", height)
+
+    let svg = d3.select("svg"),
+        radius = Math.min(width, height) / 2 - margin,
+        g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    let color = d3.scaleOrdinal(d3.schemePaired);
+
+    // Generar el pie
+    let pie = d3.pie().value(function(d) {
+			return d.value;
+		});
+
+    // Generamos las partes
+    let arc = d3.arc()
+		.innerRadius(0)
+		.outerRadius(radius);
+
+	let label = d3.arc()
+		.outerRadius(radius)
+		.innerRadius(radius - 90);
+
+    //Generate groups
+    let arcs = g.selectAll("arc")
+		.data(pie(clientesTotal))
 		.enter()
-		.append('path')
-		.merge(u)
-		.transition()
-		.duration(1000)
-		.attr('d', d3.arc()
-			.innerRadius(0)
-			.outerRadius(radius)
-		)
-		.attr('fill', function(d){ return(color(d.data.key)) })
+		.append("g")
+		.attr("class", "arc")
+
+    arcs.append("path")
+		.attr("fill", function(d, i) {
+			return color(i);
+		})
+		.attr("d", arc)
 		.attr("stroke", "white")
 		.style("stroke-width", "2px")
 		.style("opacity", 1)
+		.on("mouseover", function (d) {
+			d3.select("#tooltip")
+				.style("left", (width/2) + "px")
+				.style("top", (height/2) + "px")
+				.style("opacity", 1)
+				.select("#value")
+				.text(d.value);
+		})
+		.on("mouseout", function () {
+			d3.select("#tooltip")
+				.style("opacity", 0);
+		});
 
-	// remove the group that is not present anymore
-	u
-		.exit()
-		.remove()
+	arcs.append("text")
+		.attr("transform", function(d) {
+			return "translate(" + label.centroid(d) + ")";
+		})
+		.text(function(d) { return d.data.key; });
+
+	/*
+	svg.append("g")
+		.attr("transform", "translate(" + (width / 2 - 160) + "," + 20 + ")")
+		.append("text")
+		.text("Pie de generaciones de clientes de acuerdo al año de ingreso a la empresa")
+		.attr("class", "title")
+	*/
 }
-
-// Initialize the plot with the first dataset
-grafica(data1)
-
 
 
 // Cargar el archivo con los datos
-d3.csv("data/data_clientes.csv").then(function(data) {
+d3.csv("data/clientes_con_cluster.csv").then(function(data) {
 	data.forEach(d => {
 		d.SDO_CAPTACION = +d.SDO_CAPTACION
 		d.SDO_CORTE = +d.SDO_CORTE
@@ -254,32 +304,12 @@ d3.csv("data/data_clientes.csv").then(function(data) {
 		.values()
 		.sort()
 
-	console.log(arrayAnio)
-
-
 	// Crea el array para cluster
 	let arrayCluster = d3.set(info.map(d => d.CLUSTER))
 		.values()
 		.sort()
 
-	console.log(arrayCluster)
-
-	//let arrayIngresos = d3.set(info.map(d => d.ingresosmendes))
-	//	.values()
-	//	.sort()
-
-	// Recorre la lista de estados y agrega al combo
-	//arrayEstados.forEach(d => {
-	//	$('#divEstado').append('<div class="col-xl-3 col-lg-4 col-md-6 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdo'+d+'" value="'+d+'" name="cEdo" OnChange="grafica()"><label class="custom-control-label" for="chkEdo'+d+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
-	//})
-
-	//let j = 0
-	//arrayIngresos.forEach(d => {
-	//	$('#divIngreso').append('<div class="col-xl-6 col-md-12 col-sm-6 col-6"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkIngre'+j+'" name="cIngre" value="'+d+'"  OnChange="grafica()"><label class="custom-control-label" for="chkIngre'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
-	//	j++
-	//})
-
-	//grafica();
+	grafica()
 })
 
 

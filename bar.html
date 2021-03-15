@@ -95,6 +95,34 @@ var color =['red', 'green', 'blue', 'yellow', 'blanchedalmond', 'aquamarine', 'c
 // Asignar elementos a las variables
 var divGrafica = d3.select("#divGraficaD3bar")
 
+var tooltip = divGrafica.append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+
+function mouseover(d) {
+    tooltip
+      .style("opacity", 1)
+}
+
+function mousemove(d) {
+    tooltip
+      .html(d.TOTAL)
+      .style("left", (d3.mouse(this)[0]+90) + "px")
+      .style("top", (d3.mouse(this)[1]) + "px")
+}
+
+function mouseleave(d) {
+    tooltip
+      .transition()
+      .duration(200)
+      .style("opacity", 0)
+}
+
 // Funcion para borrar la grafica cuando hacemos un cambio en los combos
 function borrar()
 {
@@ -111,14 +139,11 @@ function grafica()
     $("input:checkbox[name=cIngre]:checked").each(function() {
         selIngre.push($(this).val());
     });
-    //console.log(selIngre);
 
     let selEdo = [];
     $("input:checkbox[name=cEdo]:checked").each(function() {
         selEdo.push($(this).val());
     });
-    //console.log(selEdo);
-
 
     // Definir variables locales
     let clientesTotal = [];
@@ -130,8 +155,6 @@ function grafica()
     if (selIngre.length > 0) {
     	clientesFiltrado = info.filter(function(d){ return selIngre.includes(d.INGRESOSMENDES)  })
     }
-
-    console.log(clientesFiltrado);
 
     // Si esta seleccionado algun estado aplicar el filtro
     if (selEdo.length > 0) {
@@ -235,6 +258,9 @@ function grafica()
 			}
 			return c;
 		})
+		.on("mouseover", mouseover)
+		.on("mousemove", mousemove)
+		.on("mouseleave", mouseleave)
 		.transition()
 		.duration(2000)
 		.attr("width", x.bandwidth())
@@ -257,12 +283,10 @@ d3.csv("data/clientes_con_cluster.csv").then(function(data) {
 	let arrayEstados = d3.set(info.map(d => d.ESTADODES))
 		.values()
 		.sort()
-	console.log(arrayEstados)
 
 	let arrayIngresos = d3.set(info.map(d => d.INGRESOSMENDES))
 		.values()
 		.sort()
-	console.log(arrayIngresos)
 
 	// Recorre la lista de estados y agrega al combo
 	arrayEstados.forEach(d => {
