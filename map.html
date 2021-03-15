@@ -105,8 +105,15 @@ var svg = d3.select("svg"),
     height = +svg.attr("height");
 
 
-var path = d3.geoPath();
+var projection = d3.geoMercator()
+      .scale(1400)
+      .center([-102, 26]);
 
+
+var path = d3.geoPath()
+	.projection(projection);
+
+/*
 var x = d3.scaleLinear()
     .domain([1, 10])
     .rangeRound([600, 860]);
@@ -118,14 +125,22 @@ var color = d3.scaleThreshold()
 var g = svg.append("g")
     //.attr("class", "key")
     .attr("transform", "translate(0,40)");
+*/
 
 var promises = [
-  d3.json("https://d3js.org/us-10m.v1.json")
+  d3.json("data/geo-data.json")
 ]
 
 Promise.all(promises).then(ready)
 
-function ready([us]) {
+function ready([mx]) {
+    svg.append('path')
+      .datum(topojson.feature(mx, mx.objects.MEX_adm1))
+      .attr('fill', 'blue')
+      //.attr("stroke", "white")
+      .attr("d", path);
+
+    /*
   svg.append("g")
     //  .attr("class", "counties")
     .selectAll("path")
@@ -133,8 +148,7 @@ function ready([us]) {
     .enter().append("path")
       //.attr("fill", function(d) { return color(d.rate = unemployment.get(d.id)); })
       .attr("d", path)
-
-
+    */
 }
 
 </script>
