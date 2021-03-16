@@ -161,6 +161,17 @@ function grafica()
 
     clientesFiltrado = info;
 
+    // Crear un array con la lista de ingresos seleccionados
+    let selIngre = [];
+    $("input:checkbox[name=cIngre]:checked").each(function() {
+        selIngre.push($(this).val());
+    });
+
+    let selEdo = [];
+    $("input:checkbox[name=cEdo]:checked").each(function() {
+        selEdo.push($(this).val());
+    });
+
     // Si esta seleccionado algun ingreso aplicar el filtro
     if (selIngre.length > 0) {
     	clientesFiltrado = info.filter(function(d){ return selIngre.includes(d.INGRESOSMENDES)  })
