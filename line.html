@@ -38,25 +38,13 @@
 					<span class="d-block p-2 bg-dark text-white">Ingreso</span>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-sm-12 col-12">
-					<span class="d-block p-2 bg-dark text-white">Orden</span>
-					<div class="custom-control custom-radio">
-						<input type="radio" id="customAscendente" name="customRadio" class="custom-control-input" onChange="grafica()" checked>
-						<label class="custom-control-label" for="customAscendente">Ascendente</label>
-					</div>
-					<div class="custom-control custom-radio">
-						<input type="radio" id="customDescendente" name="customRadio" class="custom-control-input" onChange="grafica()">
-						<label class="custom-control-label" for="customDescendente">Descendente</label>
-					</div>
-
-				</div>
-			</div>
 		</div>
 
 		<div class="col-lg-7 col-md-9 col-sm-12 col-12">
 			<div class="row">
-				<div class="col-sm-11 col-11" id="divGraficaD3bar">&nbsp;</div>
+				<div class="col-sm-11 col-11" id="divGraficaD3line">
+				<svg width="730" height="375"></svg>
+				</div>
 			</div>
 		</div>
 
@@ -85,15 +73,10 @@ var info = [];
 var estado = 'todos';
 var ingreso = 'todos';
 
-//Definir colores para las columnas
-var color =['red', 'green', 'blue', 'yellow', 'blanchedalmond', 'aquamarine', 'chocolate', 'blueviolet',
-    'crimson', 'darkred', 'forestgreen', 'gold', 'indigo', 'khaki', 'lavander', 'lemonchiffon',
-    'lightblue', 'lightgray', 'lightgreen', 'lightsalmon', 'lightseagreen', 'limegreen', 'midnightbkue', 'mistyrose',
-    'olive', 'orange', 'orangered', 'orchid', 'palevioletred', 'plum', 'royalblue', 'teal',
-    'yellowgreen', 'spinggreen', 'powderblue', 'oldlace']
+
 
 // Asignar elementos a las variables
-var divGrafica = d3.select("#divGraficaD3bar")
+var divGrafica = d3.select("#divGraficaD3line")
 
 // Funcion para borrar la grafica cuando hacemos un cambio en los combos
 function borrar()
@@ -105,7 +88,6 @@ function borrar()
 function grafica()
 {
     borrar()
-
 
     // Crear un array con la lista de ingresos seleccionados
     let selIngre = [];
@@ -138,6 +120,13 @@ function grafica()
     	clientesFiltrado = clientesFiltrado.filter(function(d){ return selEdo.includes(d.estadodes)  })
     }
 
+
+
+
+
+
+
+    /*
     // Genera sumatorias con los datos filtrados
 	clientesTotal = d3.nest()
 		.key(function(d){ return d.ingresosmendes; })
@@ -243,51 +232,32 @@ function grafica()
 		.attr("height", function (d) {
 			return height - y(Number(d.total));
 		});
+	*/
 }
 
 // Cargar el archivo con los datos
-d3.csv("data/modelo_ml_force.csv").then(function(data) {
+d3.csv("data/clientes_con_cluster.csv").then(function(data) {
 	data.forEach(d => {
-		d.estadoclav = +d.estadoclav
-		d.total = +d.total
+		d.ESTADOCLAV = +d.ESTADOCLAV
+		d.TOTAL = +d.TOTAL
 	});
 
 	//Guarda la informacion obtenida en la variable global
 	info = data;
 
 	// Crea el array de estados disponibles en base a la informacion obtenida
-	let arrayEstados = d3.set(info.map(d => d.estadodes))
+	let arrayEstados = d3.set(info.map(d => d.ESTADODES))
 		.values()
 		.sort()
 
-	let arrayIngresos = d3.set(info.map(d => d.ingresosmendes))
+	let arrayIngresos = d3.set(info.map(d => d.INGRESOSMENDES))
 		.values()
 		.sort()
 
 	// Recorre la lista de estados y agrega al combo
 	arrayEstados.forEach(d => {
 		$('#divEstado').append('<div class="col-xl-3 col-lg-4 col-md-6 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdo'+d+'" value="'+d+'" name="cEdo" OnChange="grafica()"><label class="custom-control-label" for="chkEdo'+d+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
-
-		/*
-		d3.select("#divEstado")
-			.append('div')
-			//.classed('form-check', true)
-			//.classed('form-check-inline', true)
-			//.enter()
-			.append('input')
-			.attr('type', 'checkbox')
-			.attr('value', d)
-			.attr('id', 'chkEdo'+d)
-			//.classed('form-check-input', true)
-			//.enter()
-			.append('label')
-			.attr('for', 'chkEdo'+d)
-			//.classed('form-check-label', true)
-			.text('Ostia')
-		*/
 	})
-	//$('#divEstado').append('<div class="col-sm-12 col-12"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdoTodos" name="cEdoTodos" ><label class="custom-control-label" for="chkEdoTodos" style="white-space: nowrap;"> Todos</label></div></div>')
-
 
 	let j = 0
 	arrayIngresos.forEach(d => {
@@ -297,6 +267,122 @@ d3.csv("data/modelo_ml_force.csv").then(function(data) {
 
 	grafica();
 })
+
+
+
+var svg = d3.select("svg"),
+    margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom;
+
+var parseTime = d3.timeParse("%d/%m/%y");
+    bisectDate = d3.bisector(function(d) { return d.module; }).left;
+
+var clinicalCutOffValue = 70;
+
+var x = d3.scaleLinear().range([0, width - (margin.left + margin.right)]);
+var y = d3.scaleLinear().range([height - (margin.top * 2), 0]);
+
+var line = d3.line()
+    .x(function(d) { return x(d.module); })
+    .y(function(d) { return y(d.value); });
+
+var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("data2.json", function(error, data) {
+    if (error) throw error;
+
+    console.log(data)
+
+    data.forEach(function(d) {
+      d.value = +d.value;
+      d.module = +d.module;
+    });
+
+    x.domain(d3.extent(data, function(d) { return d.module; }));
+    y.domain([
+      (Math.floor(d3.min(data, function(d) { return d.value; }) / 10) * 10),
+      (Math.ceil(d3.max(data, function(d) { return d.value; }) / 10) * 10)
+    ]);
+
+    console.log(data)
+
+    // add the Y gridlines
+    g.append("g")
+        .attr("class", "grid")
+        .call(d3.axisLeft(y)
+        	.tickSize(-width)
+          .tickFormat("")
+          .ticks(6)
+        );
+
+    g.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(" + ((margin.left + margin.right) / 2) + "," + (height - margin.top) + ")")
+        .call(d3.axisBottom(x)
+         	.ticks(6)
+          .tickFormat(function(d) { return 'Module ' + d; })
+        )
+      	.selectAll('.axis--x .tick text')
+      .append('tspan')
+        .attr("class", "axis-tspan")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("dy", margin.top * 2)
+        .text(function(d) { return data[d].date; });
+
+    g.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y).ticks(6))
+    	.append("text")
+        .attr("class", "axis-title")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .text("T Scores");
+
+    // Clinicial cut off line and text group
+  	var clinicalCutOffLineAndText = g.append("g")
+        .attr("class", "clinical-cut-off-line-and-text")
+
+    // Clinicial cut off line
+    clinicalCutOffLineAndText.append("line")
+        .attr("class", "clinical-cut-off-line")
+        .attr("x1", 0)
+        .attr("y1", y(clinicalCutOffValue))
+        .attr("x2", width)
+        .attr("y2", y(clinicalCutOffValue));
+
+    // Clinicial cut off text
+    clinicalCutOffLineAndText.append("text")
+        .attr("class", "clinical-cut-off-text")
+        .attr("y", y(clinicalCutOffValue))
+        .attr("dy","20px")
+        .text("Clinical Cut-off");
+
+    // Data line and dots group
+    var lineAndDots = g.append("g")
+    		.attr("class", "line-and-dots")
+        .attr("transform", "translate(" + ((margin.left + margin.right) / 2) + "," + 0 + ")")
+
+    // Data line
+    lineAndDots.append("path")
+        .datum(data)
+        .attr("class", "data-line")
+        .attr("d", line);
+
+    // Data dots
+    lineAndDots.selectAll("line-circle")
+    		.data(data)
+    	.enter().append("circle")
+        .attr("class", "data-circle")
+        .attr("r", 5)
+        .attr("cx", function(d) { return x(d.module); })
+        .attr("cy", function(d) { return y(d.value); });
+
+});
+
 
 $(window).resize(function(){
 	grafica();

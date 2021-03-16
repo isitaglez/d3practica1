@@ -81,20 +81,6 @@
 					<span class="d-block p-2 bg-dark text-white">Ingreso</span>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-sm-12 col-12">
-					<span class="d-block p-2 bg-dark text-white">Orden</span>
-					<div class="custom-control custom-radio">
-						<input type="radio" id="customAscendente" name="customRadio" class="custom-control-input" onChange="grafica()" checked>
-						<label class="custom-control-label" for="customAscendente">Ascendente</label>
-					</div>
-					<div class="custom-control custom-radio">
-						<input type="radio" id="customDescendente" name="customRadio" class="custom-control-input" onChange="grafica()">
-						<label class="custom-control-label" for="customDescendente">Descendente</label>
-					</div>
-
-				</div>
-			</div>
 		</div>
 
 		<div class="col-lg-7 col-md-9 col-sm-12 col-12">
@@ -132,8 +118,20 @@ let h = parseInt(w * 9 / 16)
 
 
 
-// Size and color settings for the chart
+// Funcion para borrar la grafica cuando hacemos un cambio en los combos
+function borrar()
+{
+	divGrafica.selectAll('svg').remove()
+}
 
+function grafica()
+{
+	borrar();
+
+	let resumen = {};
+	let arreglos = [];
+
+	// Size and color settings for the chart
     var margin = {
     	top: 15,
     	right: 30,
@@ -149,190 +147,203 @@ let h = parseInt(w * 9 / 16)
     var medianLineColor = "#ffffff";
     var axisColor = "#898989";
 
-    // Setup the svg and group we will draw the box plot in
+    // Establecemos el tamaño para la grafica
     var svg = d3.select("#divGraficaD3boxplot").append("svg")
     .attr("width", w)
     .attr("height", h)
     .append("g")
     .attr("transform", "translate(" + (margin.left - barWidth) + "," + margin.top + ")");
 
-    // Move axis to center align the bars with the xAxis ticks
+    // Ajustamos los ejes centrados con las barras
     var yAxisBox = svg.append("g").attr("transform", "translate(40,0)");
     var xAxisBox = svg.append("g").attr("transform", "translate(40,0)");
 
-    /*let svg = d3.select("svg"),
-	margin = {
-		top: 15,
-		right: 20,
-		bottom: 90,
-		left: 60
-	},
-	width = +svg.attr("width") - margin.left - margin.right,
-	height = +svg.attr("height") - margin.top - margin.bottom,
-	g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");*/
+
+    clientesFiltrado = info;
+
+    // Si esta seleccionado algun ingreso aplicar el filtro
+    if (selIngre.length > 0) {
+    	clientesFiltrado = info.filter(function(d){ return selIngre.includes(d.INGRESOSMENDES)  })
+    }
+
+    // Si esta seleccionado algun estado aplicar el filtro
+    if (selEdo.length > 0) {
+    	clientesFiltrado = clientesFiltrado.filter(function(d){ return selEdo.includes(d.ESTADODES)  })
+    }
 
 
-    // Load and process data
-    d3.json("data.json").then(groupCounts => {
-        // Select all values into one Array for axis scaling (min/ max)
-        // and sort group counts so quantile methods work
-        var globalCounts = [];
-        for (var key in groupCounts) {
-            var groupCount = groupCounts[key]
-            groupCounts[key] = groupCount.sort(sortNumber);
-            groupCounts[key].forEach(element => {
-                globalCounts.push(element);
-            });
-        }
+    clientesFiltrado.forEach(function(d) {
+    	let key = 'Cluster '+d.CLUSTER;
 
-        // Prepare the data for the box plots
-        var plotData = [];
-        var colorIndex = 0.1;
-        var colorIndexStepSize = 0.08;
-        for (var [key, groupCount] of Object.entries(groupCounts)) {
-            var record = {};
-            var localMin = d3.min(groupCount);
-            var localMax = d3.max(groupCount);
-
-            record["key"] = key;
-            record["counts"] = groupCount;
-            record["quartile"] = boxQuartiles(groupCount);
-            record["whiskers"] = [localMax, localMin];
-            record["color"] = d3.interpolateInferno(colorIndex);
-
-            plotData.push(record);
-            colorIndex += colorIndexStepSize;
-        }
-
-        // Create Tooltips
-        var tip = d3.tip().attr('class', 'd3-tip').direction('e').offset([0,5])
-            .html(function(d) {
-                var content = "<span style='margin-left: 2.5px;'><b>" + d.key + "</b></span><br>";
-                content +=`
-                    <table style="margin-top: 2.5px;">
-                            <tr><td>Max: </td><td style="text-align: right">` + d3.format(".2f")(d.whiskers[0]) + `</td></tr>
-                            <tr><td>Q3: </td><td style="text-align: right">` + d3.format(".2f")(d.quartile[0]) + `</td></tr>
-                            <tr><td>Median: </td><td style="text-align: right">` + d3.format(".2f")(d.quartile[1]) + `</td></tr>
-                            <tr><td>Q1: </td><td style="text-align: right">` + d3.format(".2f")(d.quartile[2]) + `</td></tr>
-                            <tr><td>Min: </td><td style="text-align: right">` + d3.format(".2f")(d.whiskers[1]) + `</td></tr>
-                    </table>
-                    `;
-                return content;
-            });
-        svg.call(tip);
-
-        // Compute an ordinal xScale for the keys in plotData
-        var xScale = d3.scalePoint()
-        .domain(Object.keys(groupCounts))
-        .rangeRound([0, width])
-        .padding([0.5]);
-
-        // Compute a global y scale based on the global counts
-        var min = d3.min(globalCounts);
-        var max = d3.max(globalCounts);
-        var yScale = d3.scaleLinear()
-            .range([height, 0])
-            .domain([min, max])
-            .nice();
-
-        // Setup the group the box plot elements will render in
-        var g = svg.append("g")
-        .attr("transform", "translate(20,0)");
-
-        // Draw the box plot vertical lines
-        var verticalLines = g.selectAll(".verticalLines")
-        .data(plotData)
-        .enter()
-        .append("line")
-        .attr("x1", d => { return xScale(d.key) + barWidth/2; })
-        .attr("y1", d =>  { return yScale(d.whiskers[0]); })
-        .attr("x2", d =>  { return xScale(d.key) + barWidth/2; })
-        .attr("y2", d => { return yScale(d.whiskers[1]); })
-        .attr("stroke", boxPlotColor)
-        .attr("stroke-width", 1)
-        .attr("stroke-dasharray", "5,5")
-        .attr("fill", "none");
-
-        // Draw the boxes of the box plot, filled in white and on top of vertical lines
-        var rects = g.selectAll("rect")
-        .data(plotData)
-        .enter()
-        .append("rect")
-        .attr("width", barWidth)
-        .attr("height", d => { return yScale(d.quartile[2]) - yScale(d.quartile[0]); })
-        .attr("x", d => { return xScale(d.key); })
-        .attr("y", d => { return yScale(d.quartile[0]); })
-        .attr("fill", d => { return d.color; })
-        .attr("stroke", boxPlotColor)
-        .attr("stroke-width", 1)
-        .on('mouseover', tip.show)
-        .on('mouseout', tip.hide);
-
-        // Config for whiskers and median
-        var horizontalLineConfigs = [
-        {   // Top whisker
-            x1: d => { return xScale(d.key) },
-            y1: d => { return yScale(d.whiskers[0]) },
-            x2: d => { return xScale(d.key) + barWidth },
-            y2: d => { return yScale(d.whiskers[0]) },
-            color: boxPlotColor
-        },
-        {   // Median
-            x1: d => { return xScale(d.key) },
-            y1: d => { return yScale(d.quartile[1]) },
-            x2: d => { return xScale(d.key) + barWidth },
-            y2: d => { return yScale(d.quartile[1]) },
-            color: medianLineColor
-        },
-        {   // Bottom whisker
-            x1: d => { return xScale(d.key) },
-            y1: d => { return yScale(d.whiskers[1]) },
-            x2: d => { return xScale(d.key) + barWidth },
-            y2: d => { return yScale(d.whiskers[1]) },
-            color: boxPlotColor
-        }
-        ];
-
-        // Draw the whiskers and median line
-        for(var i=0; i < horizontalLineConfigs.length; i++) {
-            var lineConfig = horizontalLineConfigs[i];
-            var horizontalLine = g.selectAll(".whiskers")
-                .data(plotData)
-                .enter()
-                .append("line")
-                .attr("x1", lineConfig.x1)
-                .attr("y1", lineConfig.y1)
-                .attr("x2", lineConfig.x2)
-                .attr("y2", lineConfig.y2)
-                .attr("stroke", lineConfig.color)
-                .attr("stroke-width", 1)
-                .attr("fill", "none");
-        }
-
-        // add the Y gridlines
-        svg.append("g")
-            .attr("transform", "translate(40,0)")
-            .attr("class", "grid")
-            .call(d3.axisLeft(yScale)
-                .tickSize(-width)
-                .tickFormat("")
-            )
-
-        // Setup a scale on the left
-        var yAxis = d3.axisLeft(yScale).ticks(6)
-        yAxisBox.append("g")
-            .attr("class", "y axis")
-            .call(yAxis);
-
-        // Setup a series axis on the bottom
-        var xAxis = d3.axisBottom(xScale);
-        xAxisBox.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
+    	if (typeof arreglos[key] == 'undefined') {
+			arreglos[key] = []
+		} else {
+			arreglos[key].push(d.MONTO_NOMINA);
+		}
     });
 
-    // Quartile definition
+    let groupCounts = Object.assign({}, arreglos)
+
+
+
+    // Seleccionar valores minimos y maximos
+    // y ordenamineto de grupos
+    var globalCounts = [];
+    for (var key in groupCounts) {
+        var groupCount = groupCounts[key]
+        groupCounts[key] = groupCount.sort(sortNumber);
+        groupCounts[key].forEach(element => {
+            globalCounts.push(element);
+        });
+    }
+
+    // Preparamos cada una una la cajas
+    var plotData = [];
+    var colorIndex = 0.1;
+    var colorIndexStepSize = 0.08;
+    for (var [key, groupCount] of Object.entries(groupCounts)) {
+        var record = {};
+        var localMin = d3.min(groupCount);
+        var localMax = d3.max(groupCount);
+
+        record["key"] = key;
+        record["counts"] = groupCount;
+        record["quartile"] = boxQuartiles(groupCount);
+        record["whiskers"] = [localMax, localMin];
+        record["color"] = d3.interpolateInferno(colorIndex);
+
+        plotData.push(record);
+        colorIndex += colorIndexStepSize;
+    }
+
+    // Etiqueta de información por cada cluster
+    var tip = d3.tip().attr('class', 'd3-tip').direction('e').offset([0,5])
+        .html(function(d) {
+            var content = "<span style='margin-left: 2.5px;'><b>" + d.key + "</b></span><br>";
+            content +=`
+                <table style="margin-top: 2.5px;">
+                        <tr><td>Max: </td><td style="text-align: right">` + d3.format(".2f")(d.whiskers[0]) + `</td></tr>
+                        <tr><td>Q3: </td><td style="text-align: right">` + d3.format(".2f")(d.quartile[0]) + `</td></tr>
+                        <tr><td>Median: </td><td style="text-align: right">` + d3.format(".2f")(d.quartile[1]) + `</td></tr>
+                        <tr><td>Q1: </td><td style="text-align: right">` + d3.format(".2f")(d.quartile[2]) + `</td></tr>
+                        <tr><td>Min: </td><td style="text-align: right">` + d3.format(".2f")(d.whiskers[1]) + `</td></tr>
+                </table>
+                `;
+            return content;
+        });
+    svg.call(tip);
+
+    // Definir escala para eje X
+    var xScale = d3.scalePoint()
+    .domain(Object.keys(groupCounts))
+    .rangeRound([0, width])
+    .padding([0.5]);
+
+    // Definir escala para eje Y
+    var min = d3.min(globalCounts);
+    var max = d3.max(globalCounts);
+    var yScale = d3.scaleLinear()
+        .range([height, 0])
+        .domain([min, max])
+        .nice();
+
+    // Setup the group the box plot elements will render in
+    var g = svg.append("g")
+    .attr("transform", "translate(20,0)");
+
+    // Dibujar lineas verticales punteadas
+    var verticalLines = g.selectAll(".verticalLines")
+    .data(plotData)
+    .enter()
+    .append("line")
+    	.attr("x1", d => { return xScale(d.key) + barWidth/2; })
+    	.attr("y1", d =>  { return yScale(d.whiskers[0]); })
+    	.attr("x2", d =>  { return xScale(d.key) + barWidth/2; })
+    	.attr("y2", d => { return yScale(d.whiskers[1]); })
+    	.attr("stroke", boxPlotColor)
+    	.attr("stroke-width", 1)
+    	.attr("stroke-dasharray", "5,5")
+    	.attr("fill", "none");
+
+    // Dibujar cajas
+    var rects = g.selectAll("rect")
+    .data(plotData)
+    .enter()
+    .append("rect")
+    	.attr("width", barWidth)
+    	.attr("height", d => { return yScale(d.quartile[2]) - yScale(d.quartile[0]); })
+    	.attr("x", d => { return xScale(d.key); })
+    	.attr("y", d => { return yScale(d.quartile[0]); })
+    	.attr("fill", d => { return d.color; })
+    	.attr("stroke", boxPlotColor)
+    	.attr("stroke-width", 1)
+    	.on('mouseover', tip.show)
+    	.on('mouseout', tip.hide);
+
+    // Configuracion de bigotes y media
+    var horizontalLineConfigs = [
+    {   // Bigotes superior
+        x1: d => { return xScale(d.key) },
+        y1: d => { return yScale(d.whiskers[0]) },
+        x2: d => { return xScale(d.key) + barWidth },
+        y2: d => { return yScale(d.whiskers[0]) },
+        color: boxPlotColor
+    },
+    {   // Mediana
+        x1: d => { return xScale(d.key) },
+        y1: d => { return yScale(d.quartile[1]) },
+        x2: d => { return xScale(d.key) + barWidth },
+        y2: d => { return yScale(d.quartile[1]) },
+        color: medianLineColor
+    },
+    {   // Bigote inferior
+        x1: d => { return xScale(d.key) },
+        y1: d => { return yScale(d.whiskers[1]) },
+        x2: d => { return xScale(d.key) + barWidth },
+        y2: d => { return yScale(d.whiskers[1]) },
+        color: boxPlotColor
+    }
+    ];
+
+    // Dibuja el bigote y la linea de la media
+    for(var i=0; i < horizontalLineConfigs.length; i++) {
+        var lineConfig = horizontalLineConfigs[i];
+        var horizontalLine = g.selectAll(".whiskers")
+            .data(plotData)
+            .enter()
+            .append("line")
+            .attr("x1", lineConfig.x1)
+            .attr("y1", lineConfig.y1)
+            .attr("x2", lineConfig.x2)
+            .attr("y2", lineConfig.y2)
+            .attr("stroke", lineConfig.color)
+            .attr("stroke-width", 1)
+            .attr("fill", "none");
+    }
+
+    // Agregamos referencias en eje Y
+    svg.append("g")
+        .attr("transform", "translate(40,0)")
+        .attr("class", "grid")
+        .call(d3.axisLeft(yScale)
+            .tickSize(-width)
+            .tickFormat("")
+        )
+
+    // Valores para la escala Y
+    var yAxis = d3.axisLeft(yScale).ticks(6)
+    yAxisBox.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+    // Series que deben aparecer en eje X
+    var xAxis = d3.axisBottom(xScale);
+    xAxisBox.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    // Cuartiles
     function boxQuartiles(d) {
         return [
             d3.quantile(d, .75),
@@ -343,6 +354,45 @@ let h = parseInt(w * 9 / 16)
 
     // Perform a numeric sort on an array
     function sortNumber(a,b) { return a - b; }
+}
+
+
+
+// Cargar el archivo con los datos
+d3.csv("data/clientes_con_cluster.csv").then(function(data) {
+	data.forEach(d => {
+		d.ESTADOCLAV = +d.ESTADOCLAV
+		d.TOTAL = +d.TOTAL
+		d.MONTO_NOMINA = +d.MONTO_NOMINA
+	});
+
+	//Guarda la informacion obtenida en la variable global
+	info = data;
+
+	// Crea el array de estados disponibles en base a la informacion obtenida
+	let arrayEstados = d3.set(info.map(d => d.ESTADODES))
+		.values()
+		.sort()
+
+	let arrayIngresos = d3.set(info.map(d => d.INGRESOSMENDES))
+		.values()
+		.sort()
+
+	// Recorre la lista de estados y agrega al combo
+	arrayEstados.forEach(d => {
+		$('#divEstado').append('<div class="col-xl-3 col-lg-4 col-md-6 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkEdo'+d+'" value="'+d+'" name="cEdo" OnChange="grafica()"><label class="custom-control-label" for="chkEdo'+d+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+	})
+
+	let j = 0
+	arrayIngresos.forEach(d => {
+		$('#divIngreso').append('<div class="col-xl-6 col-md-12 col-sm-6 col-6"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkIngre'+j+'" name="cIngre" value="'+d+'"  OnChange="grafica()"><label class="custom-control-label" for="chkIngre'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+		j++
+	})
+
+	grafica();
+})
+
+
 
 </script>
 
