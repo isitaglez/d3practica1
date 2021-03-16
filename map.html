@@ -93,64 +93,152 @@
 
 // Definir variables globales
 var info = [];
+var array
 var ingreso = 'todos';
 var cluster = 'todos';
 
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
-
-var projection = d3.geoMercator()
-      .scale(2000)
-      .center([-112, 29]);
-
-var path = d3.geoPath().projection(projection);
 
 
-var promises = [
-  d3.json("data/mx_tj.json")
-]
 
-Promise.all(promises).then(ready)
-
-function ready([mx]) {
-	svg.selectAll("path")
-    .data(topojson.object(mx, mx.objects.municipalities).geometries)
-    .enter().append("path")
-    .attr("d", path)
-    	.attr("fill", function(d) {
-    		if(d.properties.state_code==15) { return 'red' }
-    		else { return '#ddd'  }
-		})
-    .append("title")
-      .text(function(d) { return d.properties.mun_name; })
-    //.attr("fill", "transparent")
-    //.style("stroke", "#333")
-    //.style("stroke-width", ".2px")
-    //.attr("class", "muns")
-    ;
-
-
-    svg.append("path")
-      .datum(topojson.mesh(mx, mx.objects.municipalities, function(a, b) { return a.properties.state_code !== b.properties.state_code; }))
-      .attr("class", "state-boundary")
-      .attr("d", path);
-
-}
+var paletaRoja = ['#cb3234', '#da5b52', '#e67d72', '#f09e94', '#f8beb6', '#fddeda', '#fff'];
 
 
 function grafica()
 {
+	// Definir variables locales
+	let clientesTotal = [];
+	let clientesFiltrado = [];
+	let resumen = [];
+	let maximo = 0;
 
+	// Limpiamos el mapa previo
+	d3.select("svg").empty();
+
+	var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+	var projection = d3.geoMercator()
+	      .scale(2000)
+	      .center([-112, 29]);
+
+	var path = d3.geoPath().projection(projection);
+
+
+	// Crear un array con la lista de ingresos seleccionados
+    let selIngre = [];
+    $("input:checkbox[name=cIngre]:checked").each(function() {
+        selIngre.push($(this).val());
+    });
+
+
+    let selCluster = [];
+    $("input:checkbox[name=cCluster]:checked").each(function() {
+        selCluster.push($(this).val());
+    });
+
+
+    clientesFiltrado = info;
+
+    // Si esta seleccionado algun ingreso aplicar el filtro
+    if (selIngre.length > 0) {
+    	clientesFiltrado = info.filter(function(d){ return selIngre.includes(d.INGRESOSMENDES) })
+    }
+
+    if (selCluster.length > 0) {
+    	clientesFiltrado = info.filter(function(d){ return selCluster.includes(d.CLUSTER) })
+    }
+
+	// Genera sumatorias con los datos filtrados
+	clientesTotal = d3.nest()
+		.key(function(d){ return d.ESTADOCLAV; })
+		.key(function(d){ return d.MUNICIPIO; })
+		.rollup(function(v) { return d3.sum(v, function(d) { if(d.MUNICIPIO=='SIN MUNICIPIO') { return 0; } else { return d.TOTAL; } }); })
+		.entries(clientesFiltrado);
+
+	clientesTotal.forEach(function(d) {
+		let opc = '';
+		d.values.forEach(function(d1) {
+			if (d1.value > maximo) {
+				maximo = d1.value
+			}
+
+			if (typeof resumen[d.key] == 'undefined') {
+				resumen[d.key] = []
+			}
+
+			if (typeof resumen[d.key][d1.key] == 'undefined') {
+				resumen[d.key][d1.key] = d1.value;
+			}
+
+			//resumen.push ([d.key, d1.key, d1.value ]);
+		});
+	});
+
+	//console.log(resumen);
+	//console.log(maximo);
+
+
+	var promises = [
+	  d3.json("data/mx_tj.json")
+	]
+
+	Promise.all(promises).then(ready)
+
+	function ready([mx]) {
+		svg.selectAll("path")
+	    .data(topojson.object(mx, mx.objects.municipalities).geometries)
+	    .enter().append("path")
+	    .attr("d", path)
+	    	.attr("fill", function(d) {
+	    		let bg = '#fff';
+
+	    		if (typeof resumen[d.properties.state_code][d.properties.mun_name] != 'undefined') {
+	    			let z = (6-Math.round(resumen[d.properties.state_code][d.properties.mun_name]*7/maximo) )
+	    			//console.log(z)
+
+	    			if (z<0) {
+	    				z = 0;
+	    			}
+
+					bg = paletaRoja[z];
+	    		}
+	    		//console.log( d.properties.state_code+' - '+d.properties.mun_name+' - '+bg);
+	    		return bg;
+			})
+	    .append("title")
+	    	.text(function(d) {
+	    		let t = ''
+
+	    		if (typeof resumen[d.properties.state_code][d.properties.mun_name] != 'undefined') {
+	    			t = '['+resumen[d.properties.state_code][d.properties.mun_name]+'] ';
+	    		}
+
+	      		return t+d.properties.mun_name;
+	      	})
+	    //.attr("fill", "transparent")
+	    //.style("stroke", "#333")
+	    //.style("stroke-width", ".2px")
+	    //.attr("class", "muns")
+	    ;
+
+
+	    svg.append("path")
+	      .datum(topojson.mesh(mx, mx.objects.municipalities, function(a, b) { return a.properties.state_code !== b.properties.state_code; }))
+	      .attr("class", "state-boundary")
+	      .attr("d", path);
+
+	}
 }
+
 
 
 // Cargar el archivo con los datos
 d3.csv("data/clientes_con_cluster.csv").then(function(data) {
 	data.forEach(d => {
-		d.ESTADOCLAV = +d.ESTADOCLAV
 		d.TOTAL = +d.TOTAL
 		d.CLUSTER = +d.CLUSTER
+		d.MUNICIPIO = d.MUNICIPIO
 	});
 
 	//Guarda la informacion obtenida en la variable global
