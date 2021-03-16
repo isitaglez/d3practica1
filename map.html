@@ -96,6 +96,7 @@ var info = [];
 var array
 var ingreso = 'todos';
 var cluster = 'todos';
+var divGrafica = d3.select("#divGraficaD3map");
 
 var paletaRoja = ['#ff0000', '#ee3a1f', '#dd5035', '#ca6048', '#ff7b5a', '#b56d5b', '#ff9e81'];
 
@@ -124,18 +125,22 @@ var normalize = (function() {
 
 function grafica()
 {
+	// Limpiamos el mapa previo
+
 	// Definir variables locales
 	let clientesTotal = [];
 	let clientesFiltrado = [];
 	let resumen = [];
 	let maximo = 0;
 
-	// Limpiamos el mapa previo
-	d3.select("svg").empty();
+
+	//d3.select("#divGraficaD3boxplot").append("svg")
 
 	var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
+
+    svg.selectAll("*").remove();
 
 	var projection = d3.geoMercator()
 	      .scale(2000)
@@ -153,19 +158,21 @@ function grafica()
 
     let selCluster = [];
     $("input:checkbox[name=cCluster]:checked").each(function() {
-        selCluster.push($(this).val());
+        selCluster.push(parseInt($(this).val()));
     });
+
+    console.log(selCluster);
 
 
     clientesFiltrado = info;
 
     // Si esta seleccionado algun ingreso aplicar el filtro
     if (selIngre.length > 0) {
-    	clientesFiltrado = info.filter(function(d){ return selIngre.includes(d.INGRESOSMENDES) })
+    	clientesFiltrado = clientesFiltrado.filter(function(d){ return selIngre.includes(d.INGRESOSMENDES) })
     }
 
     if (selCluster.length > 0) {
-    	clientesFiltrado = info.filter(function(d){ return selCluster.includes(d.CLUSTER) })
+    	clientesFiltrado = clientesFiltrado.filter(function(d){ return selCluster.includes(d.CLUSTER) })
     }
 
 	// Genera sumatorias con los datos filtrados
@@ -194,9 +201,6 @@ function grafica()
 		});
 	});
 
-	//console.log(resumen);
-	//console.log(maximo);
-
 
 	var promises = [
 	  d3.json("data/mx_tj.json")
@@ -211,28 +215,33 @@ function grafica()
 	    .attr("d", path)
 	    	.attr("fill", function(d) {
 	    		let bg = '#fff';
+	    		let s = d.properties.state_code;
+	    		let m = normalize(d.properties.mun_name);
 
-	    		if (typeof resumen[d.properties.state_code][normalize(d.properties.mun_name)] != 'undefined') {
-	    			let z = (6-Math.round(resumen[d.properties.state_code][normalize(d.properties.mun_name)]*7/maximo) )
-	    			//console.log(z)
+	    		if (typeof resumen[s] != 'undefined') {
+		    		if (typeof resumen[s][m] != 'undefined') {
+		    			let z = (6-Math.round(resumen[s][m]*7/maximo) )
 
-	    			if (z<0) {
-	    				z = 0;
-	    			}
+		    			if (z<0) {
+		    				z = 0;
+		    			}
 
-					bg = paletaRoja[z];
+						bg = paletaRoja[z];
+		    		}
 	    		}
-	    		//console.log( d.properties.state_code+' - '+d.properties.mun_name+' - '+bg);
+
 	    		return bg;
 			})
 	    .append("title")
 	    	.text(function(d) {
-	    		let t = ''
+	    		let t = '';
+	    		let s = d.properties.state_code;
+	    		let m = normalize(d.properties.mun_name);
 
-	    		if (typeof resumen[d.properties.state_code][normalize(d.properties.mun_name)] != 'undefined') {
-	    			t = '['+resumen[d.properties.state_code][normalize(d.properties.mun_name)]+'] ';
-	    		} else {
-	    			console.log(d.properties.state_code+' - '+normalize(d.properties.mun_name));
+	    		if (typeof resumen[s] != 'undefined') {
+		    		if (typeof resumen[s][m] != 'undefined') {
+		    			t = '['+resumen[s][m]+'] ';
+		    		}
 	    		}
 
 	      		return t+d.properties.mun_name;
@@ -279,7 +288,7 @@ d3.csv("data/clientes_con_cluster.csv").then(function(data) {
 
 	j = 0
 	arrayClusters.forEach(d => {
-		$('#divCluster').append('<div class="col-xl-3 col-md-12 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkCluster'+j+'" name="cCluster" value="'+d+'"  OnChange="grafica()"><label class="custom-control-label" for="chkCluster'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
+		$('#divCluster').append('<div class="col-xl-3 col-md-12 col-sm-3 col-3"><div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="chkCluster'+j+'" name="cCluster" value="'+d+'" OnChange="grafica()"><label class="custom-control-label" for="chkCluster'+j+'" style="white-space: nowrap;"> '+d+'</label></div></div>')
 		j++
 	})
 
