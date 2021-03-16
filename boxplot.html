@@ -172,6 +172,9 @@ function grafica()
         selEdo.push($(this).val());
     });
 
+
+    clientesFiltrado = info.filter(function(d){ return d.MONTO_NOMINA>0 })
+
     // Si esta seleccionado algun ingreso aplicar el filtro
     if (selIngre.length > 0) {
     	clientesFiltrado = info.filter(function(d){ return selIngre.includes(d.INGRESOSMENDES)  })
@@ -184,7 +187,13 @@ function grafica()
 
 
     clientesFiltrado.forEach(function(d) {
-    	let key = 'Cluster '+d.CLUSTER;
+
+    	let de = '';
+    	if (parseInt(d.CLUSTER)<10) {
+    		de = '0';
+    	}
+
+    	let key = 'Cluster '+de+d.CLUSTER;
 
     	if (typeof arreglos[key] == 'undefined') {
 			arreglos[key] = []
@@ -193,8 +202,11 @@ function grafica()
 		}
     });
 
-    let groupCounts = Object.assign({}, arreglos)
+    //console.log(arreglos);
+    arreglos.sort();
+    //console.log(arreglos);
 
+    let groupCounts = Object.assign({}, arreglos)
 
 
     // Seleccionar valores minimos y maximos
